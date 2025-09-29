@@ -130,9 +130,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apartment.h" />
-    <ClInclude Include="IModel.h" />
-    <ClInclude Include="ModelSeralizationHelper.h" />
-    <ClInclude Include="Serializer.h" />
+    <ClInclude Include="HelperFuncs.h" />
+    <ClInclude Include="ISerializable.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Db.h" />
+    <ClInclude Include="User.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

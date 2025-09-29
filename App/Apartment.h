@@ -4,13 +4,12 @@
 #include <map>
 #include <stack>
 #include <vector>
-#include "IModel.h"
-#include "ModelSeralizationHelper.h"
+#include "User.h"
 
 const float MINIMAL_PRICE_PER_WEEK = 100;
 
 class Apartment
-    : IModel
+    : Model
 {
     std::vector<float> seasonalPricingPerWeek{ -1, -1, -1, -1 };
     std::vector<std::string> livingConditions;
@@ -18,6 +17,7 @@ class Apartment
     std::vector<std::string> amenities;
     int capacity;
 
+    std::shared_ptr<User> seller;
 public:
     const std::string City;
 
@@ -25,12 +25,14 @@ public:
         std::vector<std::string> livingConditions,
         std::vector<std::string> bookingConditions,
         std::vector<std::string> amenities,
-        std::vector<float> seasonalPricingPerWeek) :
-        IModel(id),
+        std::vector<float> seasonalPricingPerWeek,
+        std::shared_ptr<User> seller) :
+        Model(id),
         City{ city },
         capacity{ capacity }, livingConditions{ livingConditions }, bookingConditions{ bookingConditions },
         amenities{ amenities },
-        seasonalPricingPerWeek{ seasonalPricingPerWeek }
+        seasonalPricingPerWeek{ seasonalPricingPerWeek },
+        seller{ seller }
     {
     }
 
@@ -38,47 +40,47 @@ public:
 
     void CreateLivingCondition(const std::string& data)
     {
-        ModelSeralizationHelper::editContainer(&livingConditions, data, -1);
+        editContainer(&livingConditions, data, -1);
     }
 
     void UpdateLivingCondition(const std::string& data, int index)
     {
-        ModelSeralizationHelper::editContainer(&livingConditions, data, index);
+        editContainer(&livingConditions, data, index);
     }
 
     void DeleteLivingCondition(int index)
     {
-        ModelSeralizationHelper::editContainer(&livingConditions, "", index);
+        editContainer(&livingConditions, "", index);
     }
 
     void CreateBookingCondition(const std::string& data)
     {
-        ModelSeralizationHelper::editContainer(&bookingConditions, data, -1);
+        editContainer(&bookingConditions, data, -1);
     }
 
     void UpdateBookingCondition(const std::string& data, int index)
     {
-        ModelSeralizationHelper::editContainer(&bookingConditions, data, index);
+        editContainer(&bookingConditions, data, index);
     }
 
     void DeleteBookingCondition(int index)
     {
-        ModelSeralizationHelper::editContainer(&bookingConditions, "", index);
+        editContainer(&bookingConditions, "", index);
     }
 
     void CreateAmenitites(const std::string& data)
     {
-        ModelSeralizationHelper::editContainer(&amenities, data, -1);
+        editContainer(&amenities, data, -1);
     }
 
     void UpdateAmenitites(const std::string& data, int index)
     {
-        ModelSeralizationHelper::editContainer(&amenities, data, index);
+        editContainer(&amenities, data, index);
     }
 
     void DeleteAmenitites(int index)
     {
-        ModelSeralizationHelper::editContainer(&amenities, "", index);
+        editContainer(&amenities, "", index);
     }
 
     void EditCapacity(int capacity)
@@ -109,9 +111,9 @@ public:
         std::stringstream out; 
         out << City << ','
             << capacity << ','
-            << ModelSeralizationHelper::vectorToString(bookingConditions) << ','
-            << ModelSeralizationHelper::vectorToString(amenities) << ','
-            << ModelSeralizationHelper::vectorToString(livingConditions);
+            << vectorToString(bookingConditions) << ','
+            << vectorToString(amenities) << ','
+            << vectorToString(livingConditions);
     }
 };
 

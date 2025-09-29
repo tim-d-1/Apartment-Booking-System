@@ -10,16 +10,29 @@
     <Filter Include="Misc">
       <UniqueIdentifier>{bc756319-6d64-4670-ac78-a1914326191b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Abstract">
+      <UniqueIdentifier>{1985e55d-fbd9-400a-9a0d-a6d7e8cdfd1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Apartment.h">
       <Filter>Models</Filter>
     </ClInclude>
-    <ClInclude Include="Serializer.h">
+    <ClInclude Include="Db.h">
       <Filter>Misc</Filter>
     </ClInclude>
-    <ClInclude Include="IModel.h" />
-    <ClInclude Include="ModelSeralizationHelper.h" />
+    <ClInclude Include="Model.h">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="HelperFuncs.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="ISerializable.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

@@ -7,12 +7,12 @@
 #include "Apartment.h"
 
 template<typename T>
-concept Model = std::is_base_of_v<IModel, T>;
+concept ModelT = std::is_base_of_v<Model, T>;
 
 template<typename T>
 using Predicate = std::function<bool(std::shared_ptr<T>)>;
 
-template<Model T>
+template<ModelT T>
 using Container = std::list<std::unique_ptr<T>>;
 
 const std::vector<std::string> files = {
