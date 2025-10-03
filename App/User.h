@@ -11,12 +11,22 @@ protected:
     std::string username;
     std::string password;
 public:
-    User(int id, const std::string& username, const std::string& password)
-        : Model(id), username{ username }, password{ password }
-    {
+    User() : Model(), username("guest"), password("guest") {}
+    User(int id, std::string username, std::string password)
+        : Model(id), username(std::move(username)), password(std::move(password)) {
     }
 
-    void ChangePassword(const std::string& oldPass, const std::string& newPass)
+    ~User() override {
+        std::cout << "User destroyed: " << username << "\n"; // REMOVE
+    }
+
+    bool Authenticate(const std::string& pass) const { return pass == password; }
+
+    std::string GetUsername() const {
+        return username;
+    }
+
+    virtual void ChangePassword(const std::string& oldPass, const std::string& newPass)
     {
         if (oldPass != password) // FAIL
             return;
@@ -25,5 +35,11 @@ public:
         {
             password = newPass;
         }
+    }
+
+    virtual std::stringstream Serialize() {
+        std::stringstream out;
+        out << username << ','
+            << password;
     }
 };  

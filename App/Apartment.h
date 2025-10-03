@@ -8,15 +8,12 @@
 
 const float MINIMAL_PRICE_PER_WEEK = 100;
 
-class Apartment
-    : Model
-{
+class Apartment : public Model {
     std::vector<float> seasonalPricingPerWeek{ -1, -1, -1, -1 };
     std::vector<std::string> livingConditions;
     std::vector<std::string> bookingConditions;
     std::vector<std::string> amenities;
-    int capacity;
-
+    int capacity{};
     std::shared_ptr<User> seller;
 public:
     const std::string City;
@@ -26,14 +23,17 @@ public:
         std::vector<std::string> bookingConditions,
         std::vector<std::string> amenities,
         std::vector<float> seasonalPricingPerWeek,
-        std::shared_ptr<User> seller) :
-        Model(id),
-        City{ city },
-        capacity{ capacity }, livingConditions{ livingConditions }, bookingConditions{ bookingConditions },
-        amenities{ amenities },
-        seasonalPricingPerWeek{ seasonalPricingPerWeek },
-        seller{ seller }
-    {
+        std::shared_ptr<User> seller)
+        : Model(id), City(std::move(city)), capacity(capacity),
+        livingConditions(std::move(livingConditions)),
+        bookingConditions(std::move(bookingConditions)),
+        amenities(std::move(amenities)),
+        seasonalPricingPerWeek(std::move(seasonalPricingPerWeek)),
+        seller(std::move(seller)) {
+    }
+
+    ~Apartment() override {
+        std::cout << "Apartment destroyed: " << City << "\n"; // REMOVE
     }
 
 #pragma region CRUD
@@ -105,15 +105,22 @@ public:
 
         seasonalPricingPerWeek[season] = price;
     }
+
+    std::shared_ptr<User> GetSeller() const
+    {
+        return seller;
+    }
+
 #pragma endregion
 
-    virtual std::stringstream Serialize() {
-        std::stringstream out; 
+    std::stringstream Serialize() const override {
+        std::stringstream out;
         out << City << ','
             << capacity << ','
             << vectorToString(bookingConditions) << ','
             << vectorToString(amenities) << ','
             << vectorToString(livingConditions);
+        return out;
     }
 };
 

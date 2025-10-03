@@ -33,6 +33,12 @@
     <ClInclude Include="User.h">
       <Filter>Models</Filter>
     </ClInclude>
+    <ClInclude Include="Admin.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="AppService.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
