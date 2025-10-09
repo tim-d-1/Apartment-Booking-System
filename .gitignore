@@ -2,3 +2,4 @@ bin/
 obj/
 .vs/
 x64/
+WARP*

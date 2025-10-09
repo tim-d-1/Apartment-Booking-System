@@ -7,7 +7,7 @@
 class AppService {
     Db* db;
     std::shared_ptr<User> currentUser;
-
+    Container<Apartment> userApartments;
 public:
     AppService() : db(Db::GetInstance()), currentUser(nullptr) {}
 
@@ -15,6 +15,7 @@ public:
         auto user = db->Search<User>([&](auto u) { return u->GetUsername() == username; });
         if (user && user->Authenticate(password)) {
             currentUser = user;
+            userApartments = GetUserApartments();
             return true;
         }
 
@@ -70,12 +71,14 @@ public:
             });
     }
 
-    std::vector<std::shared_ptr<Apartment>> GetUserApartments() const {
+    Container<Apartment> GetUserApartments() const {
         if (!currentUser) return {};
-        return db->GetApartmentsByUser(currentUser);
+        return db->SearchAll<Apartment>([&](std::shared_ptr<Apartment> app) {
+            return app->GetSeller() == currentUser;
+            });
     }
 
-    std::vector<std::shared_ptr<Apartment>> GetAllApartments() const {
-        return db->GetAllApartments();
+    Container<Apartment> GetAllApartments() const {
+        return db->GetAll<Apartment>();
     }
 };

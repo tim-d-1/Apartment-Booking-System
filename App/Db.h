@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 #include "Apartment.h"
+#include "Admin.h"
 
 template<typename T>
 concept ModelT = std::is_base_of_v<Model, T>;

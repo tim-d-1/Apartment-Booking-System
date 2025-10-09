@@ -2,7 +2,9 @@
 #include "ISerializable.h"
 #include <iostream>
 
-class Model : public ISerializable {
+class Model : 
+    public ISerializable 
+{
 protected:
     int id;
 public:
@@ -10,6 +12,7 @@ public:
     explicit Model(int id) : id(id) {}
     Model(const Model& other) : id(other.id) {}
     Model(Model&& other) noexcept : id(other.id) { other.id = 0; }
+
     virtual ~Model()
     {
         std::cout << "Model destroyed: " << id << "\n"; // REMOVE

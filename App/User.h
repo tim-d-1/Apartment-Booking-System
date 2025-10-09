@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "HelperFuncs.h"
 
-class User;
+class Model;
 
 class User :
     public Model
@@ -37,7 +37,7 @@ public:
         }
     }
 
-    virtual std::stringstream Serialize() {
+    virtual std::stringstream Serialize() const override {
         std::stringstream out;
         out << username << ','
             << password;
