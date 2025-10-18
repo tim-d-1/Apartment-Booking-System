@@ -2,6 +2,7 @@
 #include "ISerializable.h"
 #include <iostream>
 
+
 class Model : 
     public ISerializable 
 {
@@ -15,7 +16,7 @@ public:
 
     virtual ~Model()
     {
-        std::cout << "Model destroyed: " << id << "\n"; // REMOVE
+        std::cout << "[LOG:Model] Model destroyed: " << id << "\n"; // REMOVE
     }
 
     int GetId() const { return id; }

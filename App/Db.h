@@ -17,6 +17,26 @@ using Predicate = std::function<bool(std::shared_ptr<T>)>;
 template<ModelT T>
 using Container = std::list<std::shared_ptr<T>>;
 
+template<ModelT T>
+struct TypeInfo {
+    Container<T>& TypeContainer;
+    std::string TypeFilename;
+    int& TypeLastId;
+
+    TypeInfo(
+        Container<T>& container,
+        std::string filename,
+        int& lastId
+    ) :
+        TypeContainer{ container },
+        TypeFilename{ filename },
+        TypeLastId{ lastId } {
+    }
+
+    TypeInfo() {} = default;
+
+};
+
 const std::vector<std::string> files = {
                             "Data/Users.csv",
                             "Data/Admins.csv",
@@ -37,15 +57,23 @@ class Db final
     Db() = default;
 
     template<ModelT T>
-    Container<T>& GetContainer() {
+    TypeInfo<T> getTypeInfo() {
+        TypeInfo<T> result{};
+
         if constexpr (std::is_same_v<T, User>) {
-            return reinterpret_cast<Container<T>&>(users);
+            result.TypeContainer = reinterpret_cast<Container<T>&>(users);
+            result.TypeFilename = files[0];
+            result.TypeLastId = lastUserId;
         }
         else if constexpr (std::is_same_v<T, Admin>) {
             return reinterpret_cast<Container<T>&>(admins);
+            result.TypeFilename = files[1];
+            result.TypeLastId = lastAdminId;
         }
         else if constexpr (std::is_same_v<T, Apartment>) {
             return reinterpret_cast<Container<T>&>(apartments);
+            result.TypeFilename = files[2];
+            result.TypeLastId = lastApartmentId;
         }
         else {
             static_assert(always_false<T>, "Unsupported type for Db");
@@ -54,6 +82,7 @@ class Db final
 
     template<typename>
     inline static constexpr bool always_false = false;
+
 public:
     Db(const Db&) = delete;
     Db& operator=(const Db&) = delete;
@@ -63,6 +92,23 @@ public:
             db = new Db();
         }
         return db;
+    }
+
+    template<ModelT T>
+    void LoadContainer()
+    {
+        auto typeInfo = getTypeInfo<T>();
+
+        auto lines = readAllLines(typeInfo.TypeFilename);
+
+        for (auto& line : lines)
+        {
+            std::shared_ptr<T> object{};
+            object->Deserialize(separateLine<std::string>(line));
+            typeInfo.TypeContainer.push_back(object);
+        }
+
+        typeInfo.TypeLastId = typeInfo.TypeContainer.back()->GetId();
     }
 
     template<ModelT T>
@@ -90,7 +136,7 @@ public:
     template<ModelT T>
     Container<T> SearchAll(Predicate<T> pred) {
         Container<T> res;
-        auto& cont = GetContainer<T>();
+        auto& cont = getTypeInfo<T>().TypeContainer;
         for (const auto& ptr : cont) {
             if (pred(ptr)) res.push_back(ptr);
         }
@@ -99,7 +145,7 @@ public:
 
     template<ModelT T>
     bool Remove(Predicate<T> pred) {
-        auto& cont = GetContainer<T>();
+        auto& cont = getTypeInfo<T>().TypeContainer;
         for (auto it = cont.begin(); it != cont.end(); ++it) {
             if (pred(*it)) {
                 cont.erase(it);
@@ -111,7 +157,7 @@ public:
 
     template<ModelT T>
     const Container<T>& GetAll() {
-        return GetContainer<T>();
+        return getTypeInfo<T>().TypeContainer;
     }
 };
 

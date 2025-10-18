@@ -3,38 +3,41 @@
 #include <list>
 #include <map>
 #include <stack>
-#include <vector>
+#include <string>
+#include <cctype>
 #include "User.h"
 
 const float MINIMAL_PRICE_PER_WEEK = 100;
 
 class Apartment : public Model {
+    std::string city;
     std::vector<float> seasonalPricingPerWeek{ -1, -1, -1, -1 };
     std::vector<std::string> livingConditions;
     std::vector<std::string> bookingConditions;
     std::vector<std::string> amenities;
     int capacity{};
-    std::shared_ptr<User> seller;
+    int sellerId;
 public:
-    const std::string City;
+    
 
-    Apartment(int id, std::string city, int capacity,
+    Apartment(
+        int id,
+        std::string city,
+        int capacity,
         std::vector<std::string> livingConditions,
         std::vector<std::string> bookingConditions,
         std::vector<std::string> amenities,
         std::vector<float> seasonalPricingPerWeek,
-        std::shared_ptr<User> seller)
-        : Model(id), City(std::move(city)), capacity(capacity),
+        int sellerId)
+        : Model(id), city(std::move(city)), capacity(capacity),
         livingConditions(std::move(livingConditions)),
         bookingConditions(std::move(bookingConditions)),
         amenities(std::move(amenities)),
         seasonalPricingPerWeek(std::move(seasonalPricingPerWeek)),
-        seller(std::move(seller)) {
+        sellerId(sellerId) {
     }
 
-    ~Apartment() override {
-        std::cout << "Apartment destroyed: " << City << "\n"; // REMOVE
-    }
+    ~Apartment() override {}
 
 #pragma region CRUD
 
@@ -106,21 +109,77 @@ public:
         seasonalPricingPerWeek[season] = price;
     }
 
-    std::shared_ptr<User> GetSeller() const
+    int GetSellerId() const
     {
-        return seller;
+        return sellerId;
     }
 
 #pragma endregion
 
-    std::stringstream Serialize() const override {
+    /*
+        int id,
+        std::string city,
+        int capacity,
+        std::vector<std::string> livingConditions,
+        std::vector<std::string> bookingConditions,
+        std::vector<std::string> amenities,
+        std::vector<float> seasonalPricingPerWeek,
+        std::shared_ptr<User> seller
+    */
+
+    virtual std::stringstream Serialize() const override {
         std::stringstream out;
-        out << City << ','
+        out << id << ','
+            << city << ','
             << capacity << ','
+            << vectorToString(livingConditions) << ','
             << vectorToString(bookingConditions) << ','
             << vectorToString(amenities) << ','
-            << vectorToString(livingConditions);
+            << vectorToString(seasonalPricingPerWeek, std::to_string) << ','
+            << sellerId;
         return out;
+    }
+
+    virtual void Deserialize(std::vector<std::string> params) override {
+        if (params.size() != 8) {
+            // FAIL
+            return;
+        }
+
+        id = stoi(params[0]);
+        city = params[1];
+        capacity = stoi(params[2]);
+
+        livingConditions = separateLine<std::string>(params[3], '|');
+        bookingConditions = separateLine<std::string>(params[4], '|');
+        amenities = separateLine<std::string>(params[5], '|');
+        seasonalPricingPerWeek = separateLine<float>(params[6], '|', [](auto str) { return std::stof(str); });
+        sellerId = std::stoi(params[7]);
+    }
+private:
+    static void editContainer(std::vector<std::string>* container = nullptr, const std::string& value = "", int index = -1)
+    {
+        if (!container || (value.empty() && index < 0))
+        {
+            // FAIL
+            return;
+        }
+
+        if (index < 0)
+        {
+            container->push_back(value);
+        }
+        else if (index >= 0 && index < container->size())
+        {
+            if (value.empty())
+            {
+                container->erase(container->begin() + index);
+            }
+            else
+            {
+                (*container)[index] = value;
+            }
+        }
     }
 };
 

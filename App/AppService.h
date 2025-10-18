@@ -64,17 +64,40 @@ public:
         }
     }
 
+    void AddApartment(const std::string& city, int capacity,
+        const std::vector<std::string>& livingConditions,
+        const std::vector<std::string>& bookingConditions,
+        const std::vector<std::string>& amenities,
+        const std::vector<float>& seasonalPricingPerWeek)
+    {
+        if (!IsAuthenticated()) {
+            std::cerr << "Not logged in\n";
+            return;
+        }
+
+        auto apt = std::make_shared<Apartment>(
+            -1, city, capacity,
+            livingConditions,
+            bookingConditions,
+            amenities,
+            seasonalPricingPerWeek,
+            currentUser
+        );
+
+        db->Add(apt);
+    }
+
     void RemoveApartment(int id) {
         if (!currentUser) return;
-        db->Remove<Apartment>([&](std::shared_ptr<Apartment> app) {
-            return app->GetId() == id && (app->GetSeller() == currentUser || IsAdmin());
+        db->Remove<Apartment>([&](std::shared_ptr<Apartment> ap) {
+            return !IsAdmin() ? ap->GetSellerId() == currentUser->GetId() ? ap->GetId() == id: false: ap->GetId() == id;
             });
     }
 
     Container<Apartment> GetUserApartments() const {
         if (!currentUser) return {};
-        return db->SearchAll<Apartment>([&](std::shared_ptr<Apartment> app) {
-            return app->GetSeller() == currentUser;
+        return db->SearchAll<Apartment>([&](std::shared_ptr<Apartment> ap) {
+            return ap->GetSellerId() == currentUser->GetId();
             });
     }
 

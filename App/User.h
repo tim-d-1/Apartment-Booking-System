@@ -16,9 +16,7 @@ public:
         : Model(id), username(std::move(username)), password(std::move(password)) {
     }
 
-    ~User() override {
-        std::cout << "User destroyed: " << username << "\n"; // REMOVE
-    }
+    ~User() override {}
 
     bool Authenticate(const std::string& pass) const { return pass == password; }
 
@@ -39,7 +37,19 @@ public:
 
     virtual std::stringstream Serialize() const override {
         std::stringstream out;
-        out << username << ','
+        out << id << ','
+            << username << ','
             << password;
+    }
+
+    virtual void Deserialize(std::vector<std::string> params) override {
+        if (params.size() != 3) {
+            // FAIL
+            return;
+        }
+
+        id = std::stoi(params[0]);
+        username = params[1];
+        password = params[2];
     }
 };  
