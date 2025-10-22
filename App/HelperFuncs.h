@@ -32,15 +32,15 @@ static bool isValidPassword(const std::string& password) {
     return hasNumber && hasLetter;
 }
 
-
-
 template<typename T>
-static std::string vectorToString(const std::vector<T>& vector, std::string(*toStringPolicy)(T i) = { return i; })
+static std::string vectorToString(
+    const std::vector<T>& vector, 
+    std::string(*toStringConverter)(T i) = nullptr)
 {
     std::string result;
     for (const auto& item : vector)
     {
-        result += toStringPolicy(item) + "|";
+        result += toStringConverter ? toStringConverter(item): item + "|";
     }
     return result;
 }
@@ -67,12 +67,4 @@ static std::vector<T> separateLine(
     }
 
     return result;
-}
-
-std::vector<std::string> readAllLines(const std::string& path) {
-    std::ifstream is(path);
-    std::vector<std::string> lines;
-    std::string line;
-    while (std::getline(is, line)) lines.push_back(line);
-    return lines;
 }

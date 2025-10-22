@@ -13,14 +13,11 @@
     <Filter Include="Abstract">
       <UniqueIdentifier>{1985e55d-fbd9-400a-9a0d-a6d7e8cdfd1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{09ad4b51-7953-49a3-816d-5d620dfe4d24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Apartment.h">
-      <Filter>Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Db.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Abstract</Filter>
     </ClInclude>
@@ -39,8 +36,29 @@
     <ClInclude Include="AppService.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="IStorage.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Apartment.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Db.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CsvFileStorage.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Db.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Types.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 #include "ISerializable.h"
 #include <iostream>
 
-
 class Model : 
     public ISerializable 
 {
