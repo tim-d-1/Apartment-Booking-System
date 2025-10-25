@@ -16,6 +16,9 @@
     <Filter Include="Data">
       <UniqueIdentifier>{09ad4b51-7953-49a3-816d-5d620dfe4d24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data\cpp">
+      <UniqueIdentifier>{0e194d0b-3021-4754-b2a2-3512ecec161d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
@@ -51,14 +54,20 @@
     <ClInclude Include="Types.h">
       <Filter>Data</Filter>
     </ClInclude>
+    <ClInclude Include="TypeInfo.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Db.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Types.cpp">
-      <Filter>Data</Filter>
+    <ClCompile Include="TypeInfo.cpp">
+      <Filter>Data\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Apartment.cpp">
+      <Filter>Models</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

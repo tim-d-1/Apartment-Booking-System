@@ -3,7 +3,7 @@
 #include <map>
 #include <stack>
 #include <cctype>
-#include "User.h"
+#include "Model.h"
 
 const float MINIMAL_PRICE_PER_WEEK = 100;
 
@@ -26,14 +26,8 @@ public:
         std::vector<std::string> bookingConditions,
         std::vector<std::string> amenities,
         std::vector<float> seasonalPricingPerWeek,
-        int sellerId)
-        : Model(id), city(std::move(city)), capacity(capacity),
-        livingConditions(std::move(livingConditions)),
-        bookingConditions(std::move(bookingConditions)),
-        amenities(std::move(amenities)),
-        seasonalPricingPerWeek(std::move(seasonalPricingPerWeek)),
-        sellerId(sellerId) {
-    }
+        int sellerId
+    );
 
     ~Apartment() override {}
 
@@ -114,70 +108,10 @@ public:
 
 #pragma endregion
 
-    /*
-        int id,
-        std::string city,
-        int capacity,
-        std::vector<std::string> livingConditions,
-        std::vector<std::string> bookingConditions,
-        std::vector<std::string> amenities,
-        std::vector<float> seasonalPricingPerWeek,
-        std::shared_ptr<User> seller
-    */
+    virtual std::stringstream Serialize() const override;
 
-    virtual std::stringstream Serialize() const override {
-        std::stringstream out;
-        out << id << ','
-            << city << ','
-            << capacity << ','
-            << vectorToString(livingConditions) << ','
-            << vectorToString(bookingConditions) << ','
-            << vectorToString(amenities) << ','
-            << vectorToString(seasonalPricingPerWeek, std::to_string) << ','
-            << sellerId;
-        return out;
-    }
-
-    virtual void Deserialize(std::vector<std::string> params) override {
-        if (params.size() != 8) {
-            // FAIL
-            return;
-        }
-
-        id = stoi(params[0]);
-        city = params[1];
-        capacity = stoi(params[2]);
-
-        livingConditions = separateLine<std::string>(params[3], '|');
-        bookingConditions = separateLine<std::string>(params[4], '|');
-        amenities = separateLine<std::string>(params[5], '|');
-        seasonalPricingPerWeek = separateLine<float>(params[6], '|', [](auto str) { return std::stof(str); });
-        sellerId = std::stoi(params[7]);
-    }
+    virtual void Deserialize(std::vector<std::string> params) override;
 private:
-    static void editContainer(std::vector<std::string>* container = nullptr, const std::string& value = "", int index = -1)
-    {
-        if (!container || (value.empty() && index < 0))
-        {
-            // FAIL
-            return;
-        }
-
-        if (index < 0)
-        {
-            container->push_back(value);
-        }
-        else if (index >= 0 && index < container->size())
-        {
-            if (value.empty())
-            {
-                container->erase(container->begin() + index);
-            }
-            else
-            {
-                (*container)[index] = value;
-            }
-        }
-    }
+    static void editContainer(std::vector<std::string>* container = nullptr, const std::string& value = "", int index = -1);
 };
 

@@ -1,4 +1,11 @@
+#include "TypeInfo.h"
+#include "CsvFileStorage.h"
 #include "Db.h"
+
+Db& Db::GetInstance() {
+    static Db instance(std::make_unique<CsvFileStorage>());
+    return instance;
+}
 
 template<ModelT T>
 void Db::LoadContainer() {
@@ -46,10 +53,10 @@ void Db::Add(std::shared_ptr<T> obj) {
 }
 
 template<ModelT T>
-bool Db::Update(int id, std::function<void(std::shared_ptr<T>)> updater) {
+bool Db::Update(Predicate<T> pred, std::function<void(std::shared_ptr<T>)> updater) {
     auto& cont = getTypeInfo<T>().TypeContainer;
     for (auto& obj : cont) {
-        if (obj->GetId() == id) {
+        if (pred(pred)) {
             updater(obj);
             return true;
         }
@@ -100,7 +107,6 @@ void Db::RemoveAll(Predicate<T> pred) {
             ++it;
         }
     }
-    return removed;
 }
 
 template<ModelT T>

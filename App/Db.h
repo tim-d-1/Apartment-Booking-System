@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <functional>
 #include "Types.h"
-#include "CsvFileStorage.h"
-#include <typeindex>
-#include <any>
+#include "Apartment.h"
+#include "Admin.h"
+#include "IStorage.h"
 
 class Db final
 {
@@ -18,6 +18,7 @@ class Db final
 
     int lastUserId{ 0 };
     int lastAdminId{ 0 };
+
     int lastApartmentId{ 0 };
 
     Db();
@@ -29,10 +30,7 @@ public:
     Db(const Db&) = delete;
     Db& operator=(const Db&) = delete;
 
-    static Db& GetInstance() {
-        static Db instance(std::make_unique<CsvFileStorage>());
-        return instance;
-    }
+    static Db& GetInstance();
 
     Container<User>& GetUsers() { return users; }
     Container<Admin>& GetAdmins() { return admins; }
@@ -48,7 +46,7 @@ public:
     template<ModelT T> void SaveContainer();
 
     template<ModelT T> void Add(std::shared_ptr<T> obj);
-    template<ModelT T> bool Update(int id, std::function<void(std::shared_ptr<T>)> updater);
+    template<ModelT T> bool Update(Predicate<T>, std::function<void(std::shared_ptr<T>)> updater);
 
     template<ModelT T> std::shared_ptr<T> Search(Predicate<T> pred);
     template<ModelT T> Container<T> SearchAll(Predicate<T> pred);

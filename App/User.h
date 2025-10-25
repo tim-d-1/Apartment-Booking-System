@@ -29,7 +29,7 @@ public:
         if (oldPass != password) // FAIL
             return;
 
-        if (isValidPassword(newPass))
+        if (HelperFuncs::isValidPassword(newPass))
         {
             password = newPass;
         }

@@ -1,25 +1,22 @@
 #pragma once
 #include "Db.h"
-#include "Apartment.h"
-#include "User.h"
-#include "Admin.h"
 
 class AppService {
-    Db* db;
+    Db& db;
     std::shared_ptr<User> currentUser;
     Container<Apartment> userApartments;
 public:
     AppService() : db(Db::GetInstance()), currentUser(nullptr) {}
 
     bool Login(const std::string& username, const std::string& password) {
-        auto user = db->Search<User>([&](auto u) { return u->GetUsername() == username; });
+        auto user = db.Search<User>([&](auto u) { return u->GetUsername() == username; });
         if (user && user->Authenticate(password)) {
             currentUser = user;
             userApartments = GetUserApartments();
             return true;
         }
 
-        auto admin = db->Search<Admin>([&](auto a) { return a->GetUsername() == username; });
+        auto admin = db.Search<Admin>([&](auto a) { return a->GetUsername() == username; });
         if (admin && admin->Authenticate(password)) {
             currentUser = admin;
             return true;
@@ -43,7 +40,7 @@ public:
             std::cerr << "Permission denied: only admin can register new users\n";
             return;
         }
-        db->Add(std::make_shared<User>(-1, username, password));
+        db.Add(std::make_shared<User>(-1, username, password));
     }
 
     void ChangePassword(const std::string& oldPass, const std::string& newPass) {
@@ -59,7 +56,7 @@ public:
             std::cerr << "Permission denied: only admin can view users\n";
             return;
         }
-        for (auto& u : db->GetAll<User>()) {
+        for (auto& u : db.GetAll<User>()) {
             std::cout << "User: " << u->GetUsername() << "\n";
         }
     }
@@ -81,27 +78,27 @@ public:
             bookingConditions,
             amenities,
             seasonalPricingPerWeek,
-            currentUser
+            currentUser->GetId()
         );
 
-        db->Add(apt);
+        db.Add(apt);
     }
 
     void RemoveApartment(int id) {
         if (!currentUser) return;
-        db->Remove<Apartment>([&](std::shared_ptr<Apartment> ap) {
+        db.Remove<Apartment>([&](std::shared_ptr<Apartment> ap) {
             return !IsAdmin() ? ap->GetSellerId() == currentUser->GetId() ? ap->GetId() == id: false: ap->GetId() == id;
             });
     }
 
     Container<Apartment> GetUserApartments() const {
         if (!currentUser) return {};
-        return db->SearchAll<Apartment>([&](std::shared_ptr<Apartment> ap) {
+        return db.SearchAll<Apartment>([&](std::shared_ptr<Apartment> ap) {
             return ap->GetSellerId() == currentUser->GetId();
             });
     }
 
     Container<Apartment> GetAllApartments() const {
-        return db->GetAll<Apartment>();
+        return db.GetAll<Apartment>();
     }
 };
