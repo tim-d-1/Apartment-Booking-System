@@ -1,14 +1,16 @@
 #pragma once
-#include <type_traits>
+#include "Model.h"
 #include <filesystem>
 #include <functional>
-#include "Model.h"
+#include <type_traits>
 
-template<typename T>
+template <typename T>
 concept ModelT = std::is_base_of_v<Model, T>;
 
-template<ModelT T>
-using Container = std::vector<std::shared_ptr<T>>;
+template <ModelT T> using Container = std::vector<std::shared_ptr<T>>;
 
-template<typename T>
+template <typename T>
 using Predicate = std::function<bool(const std::shared_ptr<T>&)>;
+
+template <typename T>
+using UpdaterFunc = std::function<void(std::shared_ptr<T>)>;

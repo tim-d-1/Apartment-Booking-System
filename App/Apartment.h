@@ -1,35 +1,32 @@
 #pragma once
+#include "Model.h"
+#include <cctype>
 #include <list>
 #include <map>
 #include <stack>
-#include <cctype>
-#include "Model.h"
 
 const float MINIMAL_PRICE_PER_WEEK = 100;
 
-class Apartment : public Model {
+class Apartment : public Model
+{
     std::string city;
-    std::vector<float> seasonalPricingPerWeek{ -1, -1, -1, -1 };
+    std::vector<float> seasonalPricingPerWeek{-1, -1, -1, -1};
     std::vector<std::string> livingConditions;
     std::vector<std::string> bookingConditions;
     std::vector<std::string> amenities;
     int capacity{};
     int sellerId;
-public:
-    
 
-    Apartment(
-        int id,
-        std::string city,
-        int capacity,
-        std::vector<std::string> livingConditions,
-        std::vector<std::string> bookingConditions,
-        std::vector<std::string> amenities,
-        std::vector<float> seasonalPricingPerWeek,
-        int sellerId
-    );
+  public:
+    Apartment(int id, std::string city, int capacity,
+              std::vector<std::string> livingConditions,
+              std::vector<std::string> bookingConditions,
+              std::vector<std::string> amenities,
+              std::vector<float> seasonalPricingPerWeek, int sellerId);
 
-    ~Apartment() override {}
+    ~Apartment() override
+    {
+    }
 
 #pragma region CRUD
 
@@ -111,7 +108,8 @@ public:
     virtual std::stringstream Serialize() const override;
 
     virtual void Deserialize(std::vector<std::string> params) override;
-private:
-    static void editContainer(std::vector<std::string>* container = nullptr, const std::string& value = "", int index = -1);
-};
 
+  private:
+    static void editContainer(std::vector<std::string>* container = nullptr,
+                              const std::string& value = "", int index = -1);
+};

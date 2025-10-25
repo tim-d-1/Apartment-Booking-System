@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-class ISerializable {
-public:
+class ISerializable
+{
+  public:
     virtual ~ISerializable() = default;
 
     /**

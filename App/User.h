@@ -1,30 +1,41 @@
 #pragma once
-#include "Model.h"
 #include "HelperFuncs.h"
+#include "Model.h"
 
 class Model;
 
-class User :
-    public Model
+class User : public Model
 {
-protected:
+  protected:
     std::string username;
     std::string password;
-public:
-    User() : Model(), username("guest"), password("guest") {}
+
+  public:
+    User() : Model(), username("guest"), password("guest")
+    {
+    }
     User(int id, std::string username, std::string password)
-        : Model(id), username(std::move(username)), password(std::move(password)) {
+        : Model(id), username(std::move(username)),
+          password(std::move(password))
+    {
     }
 
-    ~User() override {}
+    ~User() override
+    {
+    }
 
-    bool Authenticate(const std::string& pass) const { return pass == password; }
+    bool Authenticate(const std::string& pass) const
+    {
+        return pass == password;
+    }
 
-    std::string GetUsername() const {
+    std::string GetUsername() const
+    {
         return username;
     }
 
-    virtual void ChangePassword(const std::string& oldPass, const std::string& newPass)
+    virtual void ChangePassword(const std::string& oldPass,
+                                const std::string& newPass)
     {
         if (oldPass != password) // FAIL
             return;
@@ -35,15 +46,16 @@ public:
         }
     }
 
-    virtual std::stringstream Serialize() const override {
+    virtual std::stringstream Serialize() const override
+    {
         std::stringstream out;
-        out << id << ','
-            << username << ','
-            << password;
+        out << id << ',' << username << ',' << password;
     }
 
-    virtual void Deserialize(std::vector<std::string> params) override {
-        if (params.size() != 3) {
+    virtual void Deserialize(std::vector<std::string> params) override
+    {
+        if (params.size() != 3)
+        {
             // FAIL
             return;
         }
@@ -52,4 +64,4 @@ public:
         username = params[1];
         password = params[2];
     }
-};  
+};

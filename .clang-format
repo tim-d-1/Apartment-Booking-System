@@ -1,0 +1,22 @@
+BasedOnStyle: Microsoft
+
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+ColumnLimit: 80
+PenaltyBreakBeforeFirstCallParameter: 1
+PenaltyBreakString: 50
+PenaltyBreakComment: 20
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 8
+
+ReflowComments: true

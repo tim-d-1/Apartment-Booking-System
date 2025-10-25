@@ -1,11 +1,12 @@
-#include <string>
 #include <cctype>
-#include <vector>
 #include <fstream>
+#include <string>
+#include <vector>
 
 struct HelperFuncs
 {
-    static bool isValidPassword(const std::string& password) {
+    static bool isValidPassword(const std::string& password)
+    {
         if (password.length() < 8)
         {
             return false;
@@ -34,17 +35,19 @@ struct HelperFuncs
         return hasNumber && hasLetter;
     }
 
-    template<typename T>
+    template <typename T>
     static std::string vectorToString(
-        const std::vector<T>& vector,
-        std::string(*toStringConverter)(T i) = nullptr)
+            const std::vector<T>& vector,
+            std::string (*toStringConverter)(T i) = nullptr)
     {
         std::string result;
 
         for (const auto& item : vector)
         {
-            if constexpr (!std::is_same<T, std::string>()) result += toStringConverter(item) + '|';
-            else result += item + '|';
+            if constexpr (!std::is_same<T, std::string>())
+                result += toStringConverter(item) + '|';
+            else
+                result += item + '|';
         }
         return result;
     }
@@ -55,11 +58,10 @@ struct HelperFuncs
      * @param separator The character that divides the words. Defaults to ','.
      * @return A vector of strings, where each element is a word.
      */
-    template<typename T>
+    template <typename T>
     static std::vector<T> separateLine(
-        const std::string& line,
-        const char separator = '|',
-        T(*typeConverter)(const std::string& i) = nullptr)
+            const std::string& line, const char separator = '|',
+            T (*typeConverter)(const std::string& i) = nullptr)
     {
         std::vector<T> result;
         std::stringstream ss(line);
