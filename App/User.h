@@ -1,9 +1,7 @@
 #pragma once
-#include "Config.h"
 #include "HelperFuncs.h"
 #include "Model.h"
-
-class Model;
+#include <stdexcept>
 
 class User : public Model
 {
@@ -15,14 +13,63 @@ class User : public Model
     User() : Model(), username("guest"), password("guest")
     {
     }
-    User(int id, std::string username, std::string password)
-        : Model(id), username(std::move(username)),
-          password(std::move(password))
+
+    User(int id, const std::string& username, const std::string& password)
+        : Model(id)
+    {
+        SetUsername(username);
+        SetPassword(password);
+    }
+
+    User(const User& other)
+        : Model(other.id), username(other.username), password(other.password)
     {
     }
 
-    ~User() override
+    User(User&& other) noexcept
+        : Model(other.id), username(std::move(other.username)),
+          password(std::move(other.password))
     {
+        other.id = 0;
+    }
+
+    User& operator=(const User& other)
+    {
+        if (this != &other)
+        {
+            id = other.id;
+            username = other.username;
+            password = other.password;
+        }
+        return *this;
+    }
+
+    User& operator=(User&& other) noexcept
+    {
+        if (this != &other)
+        {
+            id = other.id;
+            username = std::move(other.username);
+            password = std::move(other.password);
+            other.id = 0;
+        }
+        return *this;
+    }
+
+    virtual ~User() override = default;
+
+    void SetUsername(const std::string& u)
+    {
+        if (u.empty())
+            throw std::invalid_argument("Username cannot be empty.");
+        username = u;
+    }
+
+    void SetPassword(const std::string& p)
+    {
+        if (!HelperFuncs::isValidPassword(p))
+            throw std::invalid_argument("Password is too weak.");
+        password = p;
     }
 
     bool Authenticate(const std::string& pass) const
@@ -39,35 +86,24 @@ class User : public Model
                                 const std::string& newPass)
     {
         if (oldPass != password)
-            return;
-
-        if (HelperFuncs::isValidPassword(newPass))
-        {
-            password = newPass;
-        }
+            throw std::runtime_error("Old password incorrect.");
+        SetPassword(newPass);
     }
 
     virtual std::stringstream Serialize() const override
     {
-        std::stringstream out;
-        out << id << ',' << username << ',' << password;
-        return out;
+        std::stringstream ss;
+        ss << id << "," << username << "," << password;
+        return ss;
     }
 
     virtual void Deserialize(std::vector<std::string> params) override
     {
         if (params.size() != 3)
-        {
-#ifdef LOGGING
-            std::cerr << "[Error] Not enough params for Deserialize, params: '"
-                      << HelperFuncs::vectorToString(params, ' ')
-                      << "'\nRequired: 3\n";
-#endif
-            return;
-        }
+            throw std::runtime_error("User::Deserialize expected 3 fields.");
 
         id = std::stoi(params[0]);
-        username = params[1];
+        SetUsername(params[1]);
         password = params[2];
     }
 };

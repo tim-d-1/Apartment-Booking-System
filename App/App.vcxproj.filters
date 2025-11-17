@@ -69,12 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Db.cpp">
-      <Filter>Data\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Apartment.cpp">
-      <Filter>Models</Filter>
-    </ClCompile>
     <ClCompile Include="AppUI.cpp">
       <Filter>CLI\cpp</Filter>
     </ClCompile>

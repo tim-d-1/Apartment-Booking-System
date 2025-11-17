@@ -150,10 +150,8 @@
     <ClInclude Include="User.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Apartment.cpp" />
     <ClCompile Include="AppService.cpp" />
     <ClCompile Include="AppUI.cpp" />
-    <ClCompile Include="Db.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

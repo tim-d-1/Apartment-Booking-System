@@ -33,8 +33,32 @@ class Model : public ISerializable
 
     void SetId(int newId)
     {
+        if (newId < 0)
+            throw std::invalid_argument("ID must be non-negative");
+
         id = newId;
     }
+
+
+    Model& operator=(const Model& other)
+    {
+        if (this != &other)
+        {
+            id = other.id;
+        }
+        return *this;
+    }
+
+    Model& operator=(Model&& other) noexcept
+    {
+        if (this != &other)
+        {
+            id = other.id;
+            other.id = 0;
+        }
+        return *this;
+    }
+
 
   protected:
     int id;

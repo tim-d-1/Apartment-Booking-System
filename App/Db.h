@@ -2,15 +2,20 @@
 #include "Admin.h"
 #include "Apartment.h"
 #include "Config.h"
-#include "IStorage.h"
+#include "CsvFileStorage.h"
 #include "Types.h"
-#include <functional>
+#include "User.h"
+
+#include <algorithm>
 #include <iostream>
-#include <type_traits>
+#include <memory>
+#include <stdexcept>
 #include <unordered_map>
+#include <vector>
 
 class Db final
 {
+  private:
     std::unique_ptr<IStorage> storage;
 
     Container<User> users;
@@ -19,52 +24,67 @@ class Db final
 
     int lastUserId{0};
     int lastAdminId{0};
-
     int lastApartmentId{0};
 
-    Db();
+  private:
+    Db() : storage{std::make_unique<CsvFileStorage>()}
+    {
+    }
 
-    Db(std::unique_ptr<IStorage> storageImpl) : storage(std::move(storageImpl))
+    Db(std::unique_ptr<IStorage> customStorage)
+        : storage(std::move(customStorage))
     {
     }
 
   public:
     Db(const Db&) = delete;
+    Db(Db&&) = delete;
+
     Db& operator=(const Db&) = delete;
+    Db& operator=(Db&&) = delete;
 
-    static Db& GetInstance();
+    ~Db() = default;
 
-    Container<User>& GetUsers()
+    static Db& GetInstance()
     {
-        return users;
+        static Db instance;
+        return instance;
     }
 
-    Container<Admin>& GetAdmins()
+    template <ModelT T> Container<T>& GetContainerRef()
     {
-        return admins;
+        if constexpr (std::is_same_v<T, User>)
+            return users;
+        else if constexpr (std::is_same_v<T, Admin>)
+            return admins;
+        else if constexpr (std::is_same_v<T, Apartment>)
+            return apartments;
+        else
+            throw std::logic_error("Unsupported model type");
     }
 
-    Container<Apartment>& GetApartments()
+    template <ModelT T> int& GetLastIdRef()
     {
-        return apartments;
+        if constexpr (std::is_same_v<T, User>)
+            return lastUserId;
+        else if constexpr (std::is_same_v<T, Admin>)
+            return lastAdminId;
+        else if constexpr (std::is_same_v<T, Apartment>)
+            return lastApartmentId;
+        else
+            throw std::logic_error("Unsupported model type");
     }
 
-    int& GetLastUserId()
+    template <ModelT T> const char* GetFilenameForType()
     {
-        return lastUserId;
-    }
-    int& GetLastAdminId()
-    {
-        return lastAdminId;
-    }
-    int& GetLastApartmentId()
-    {
-        return lastApartmentId;
-    }
-
-    std::unique_ptr<IStorage>& GetStorage()
-    {
-        return storage;
+        if constexpr (std::is_same_v<T, User>)
+            return ConfigPaths::Users;
+        else if constexpr (std::is_same_v<T, Admin>)
+            return ConfigPaths::Admins;
+        else if constexpr (std::is_same_v<T, Apartment>)
+            return ConfigPaths::Apartments;
+        else
+            throw std::logic_error("Unsupported model type");
     }
 
     template <ModelT T> void LoadContainer()
@@ -73,35 +93,38 @@ class Db final
         auto& lastId = GetLastIdRef<T>();
         const char* filename = GetFilenameForType<T>();
 
+        cont.clear();
+        lastId = 0;
+
         if (!storage->Exists(filename))
         {
 #ifdef LOGGING
-            std::cerr << "[Error] File " << filename << " wasn't found\n";
+            std::cerr << "[Info] File not found: " << filename << '\n';
 #endif
             return;
         }
 
         auto lines = storage->ReadAll(filename);
-        for (auto& line : lines)
-        {
-            auto obj = std::make_shared<T>();
-            obj->Deserialize(HelperFuncs::separateLine<std::string>(line, ','));
-            cont.push_back(obj);
-        }
 
-        if (!cont.empty())
+        for (const auto& line : lines)
         {
-            int maxId = 0;
-            for (auto& obj : cont)
-                maxId = std::max(maxId, obj->GetId());
-            lastId = maxId;
-        }
+            try
+            {
+                auto params = HelperFuncs::separateLine<std::string>(line, ',');
+                auto obj = std::make_shared<T>();
+                obj->Deserialize(params);
+                cont.push_back(obj);
 
-        #ifdef LOGGING
-        Update<T>(
-                [](auto p) { return true; }, [](auto it)
-                { std::cout << "\n[Logging] Item: " << it->Serialize().str(); });
+                lastId = std::max(lastId, obj->GetId());
+            }
+            catch (const std::exception& e)
+            {
+#ifdef LOGGING
+                std::cerr << "[Error] Failed to load: " << e.what()
+                          << "\nLine: " << line << '\n';
 #endif
+            }
+        }
     }
 
     template <ModelT T> void SaveContainer()
@@ -110,14 +133,12 @@ class Db final
         const char* filename = GetFilenameForType<T>();
 
         std::vector<std::string> lines;
+        lines.reserve(cont.size());
+
         for (auto& obj : cont)
             lines.push_back(obj->Serialize().str());
 
         storage->WriteAll(filename, lines);
-
-#ifdef LOGGING
-        std::cout << "[Info] Container was saved at '" << filename << "'\n";
-#endif
     }
 
     template <ModelT T> void Add(std::shared_ptr<T> obj)
@@ -126,16 +147,9 @@ class Db final
         auto& lastId = GetLastIdRef<T>();
 
         if (obj->GetId() <= 0)
-        {
             obj->SetId(++lastId);
-        }
 
         cont.push_back(obj);
-
-#ifdef LOGGING
-        std::cout << "[Info] Object was added: " << obj->Serialize().str()
-                  << '\n';
-#endif
         SaveContainer<T>();
     }
 
@@ -148,38 +162,11 @@ class Db final
             if (pred(obj))
             {
                 updater(obj);
+                SaveContainer<T>();
                 return true;
             }
         }
-
         return false;
-    }
-
-    template <ModelT T> std::shared_ptr<T> Search(Predicate<T> pred)
-    {
-        auto& cont = GetContainerRef<T>();
-
-        for (const auto& ptr : cont)
-        {
-            if (pred(ptr))
-                return ptr;
-        }
-
-        return nullptr;
-    }
-
-    template <ModelT T> Container<T> SearchAll(Predicate<T> pred)
-    {
-        auto& cont = GetContainerRef<T>();
-        Container<T> result;
-
-        for (const auto& ptr : cont)
-        {
-            if (pred(ptr))
-                result.push_back(ptr);
-        }
-
-        return result;
     }
 
     template <ModelT T> bool Remove(Predicate<T> pred)
@@ -191,10 +178,10 @@ class Db final
             if (pred(*it))
             {
                 cont.erase(it);
+                SaveContainer<T>();
                 return true;
             }
         }
-
         return false;
     }
 
@@ -202,65 +189,47 @@ class Db final
     {
         auto& cont = GetContainerRef<T>();
 
+        bool changed = false;
         for (auto it = cont.begin(); it != cont.end();)
         {
             if (pred(*it))
+            {
                 it = cont.erase(it);
+                changed = true;
+            }
             else
                 ++it;
         }
+
+        if (changed)
+            SaveContainer<T>();
+    }
+
+    template <ModelT T> std::shared_ptr<T> Search(Predicate<T> pred)
+    {
+        auto& cont = GetContainerRef<T>();
+
+        for (const auto& ptr : cont)
+            if (pred(ptr))
+                return ptr;
+
+        return nullptr;
+    }
+
+    template <ModelT T> Container<T> SearchAll(Predicate<T> pred)
+    {
+        auto& cont = GetContainerRef<T>();
+        Container<T> result;
+
+        for (const auto& ptr : cont)
+            if (pred(ptr))
+                result.push_back(ptr);
+
+        return result;
     }
 
     template <ModelT T> const Container<T>& GetAll()
     {
         return GetContainerRef<T>();
-    }
-
-  private:
-    template <typename T> constexpr Container<T>& GetContainerRef();
-
-    template <typename T> constexpr int& GetLastIdRef();
-
-    template <typename T> constexpr const char* GetFilenameForType();
-
-    template <> constexpr Container<User>& GetContainerRef<User>()
-    {
-        return users;
-    }
-    template <> constexpr Container<Admin>& GetContainerRef<Admin>()
-    {
-        return admins;
-    }
-    template <> constexpr Container<Apartment>& GetContainerRef<Apartment>()
-    {
-        return apartments;
-    }
-
-    template <> constexpr int& GetLastIdRef<User>()
-    {
-        return lastUserId;
-    }
-    template <> constexpr int& GetLastIdRef<Admin>()
-    {
-        return lastAdminId;
-    }
-    template <> constexpr int& GetLastIdRef<Apartment>()
-    {
-        return lastApartmentId;
-    }
-
-    template <> constexpr const char* GetFilenameForType<User>()
-    {
-        return ConfigPaths::Users;
-    }
-
-    template <> constexpr const char* GetFilenameForType<Admin>()
-    {
-        return ConfigPaths::Admins;
-    }
-
-    template <> constexpr const char* GetFilenameForType<Apartment>()
-    {
-        return ConfigPaths::Apartments;
     }
 };

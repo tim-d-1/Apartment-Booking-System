@@ -49,10 +49,10 @@ void AppUI::ShowUserMenu()
     {
     case 1:
     {
-        auto apartments = service.GetUserApartments();
-        for (auto& a : apartments)
-            std::cout << "Apartment ID: " << a->GetId()
-                      << ", City: " << /* TODO: getter for city */ "\n";
+        //auto apartments = service.GetUserApartments();
+        //for (auto& a : apartments)
+        //    std::cout << "Apartment ID: " << a->GetId()
+        //              << ", City: " << /* TODO: getter for city */ "\n";
         break;
     }
     case 2:
