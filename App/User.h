@@ -1,4 +1,5 @@
 #pragma once
+#include "Config.h"
 #include "HelperFuncs.h"
 #include "Model.h"
 
@@ -37,7 +38,7 @@ class User : public Model
     virtual void ChangePassword(const std::string& oldPass,
                                 const std::string& newPass)
     {
-        if (oldPass != password) // FAIL
+        if (oldPass != password)
             return;
 
         if (HelperFuncs::isValidPassword(newPass))
@@ -50,13 +51,18 @@ class User : public Model
     {
         std::stringstream out;
         out << id << ',' << username << ',' << password;
+        return out;
     }
 
     virtual void Deserialize(std::vector<std::string> params) override
     {
         if (params.size() != 3)
         {
-            // FAIL
+#ifdef LOGGING
+            std::cerr << "[Error] Not enough params for Deserialize, params: '"
+                      << HelperFuncs::vectorToString(params, ' ')
+                      << "'\nRequired: 3\n";
+#endif
             return;
         }
 

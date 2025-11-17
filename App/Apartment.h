@@ -24,6 +24,8 @@ class Apartment : public Model
               std::vector<std::string> amenities,
               std::vector<float> seasonalPricingPerWeek, int sellerId);
 
+    Apartment() {}
+
     ~Apartment() override
     {
     }

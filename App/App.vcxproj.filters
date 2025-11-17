@@ -19,6 +19,12 @@
     <Filter Include="Data\cpp">
       <UniqueIdentifier>{0e194d0b-3021-4754-b2a2-3512ecec161d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CLI">
+      <UniqueIdentifier>{5bb8a201-81d4-45bd-b064-fe848de4c6d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CLI\cpp">
+      <UniqueIdentifier>{0a3363d1-463d-4a15-98ec-639c860084fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
@@ -36,9 +42,6 @@
     <ClInclude Include="Admin.h">
       <Filter>Models</Filter>
     </ClInclude>
-    <ClInclude Include="AppService.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
     <ClInclude Include="IStorage.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
@@ -54,8 +57,14 @@
     <ClInclude Include="Types.h">
       <Filter>Data</Filter>
     </ClInclude>
-    <ClInclude Include="TypeInfo.h">
-      <Filter>Data</Filter>
+    <ClInclude Include="AppService.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="AppUI.h">
+      <Filter>CLI</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -63,11 +72,14 @@
     <ClCompile Include="Db.cpp">
       <Filter>Data\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="TypeInfo.cpp">
-      <Filter>Data\cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Apartment.cpp">
       <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="AppUI.cpp">
+      <Filter>CLI\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="AppService.cpp">
+      <Filter>Misc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

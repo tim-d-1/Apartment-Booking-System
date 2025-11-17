@@ -2,6 +2,7 @@
 #include "IStorage.h"
 #include <filesystem>
 #include <fstream>
+#include "Config.h"
 
 class CsvFileStorage : public IStorage
 {
@@ -26,7 +27,12 @@ class CsvFileStorage : public IStorage
     {
         std::ofstream file(path, std::ios::trunc);
         if (!file.is_open())
+        {
+            #ifdef LOGGING
+                std::cerr << "[Error] File " << path << " wasn't open\n";
+            #endif
             return;
+        }
 
         for (const auto& l : lines)
             file << l << '\n';

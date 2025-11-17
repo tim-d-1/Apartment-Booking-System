@@ -22,7 +22,8 @@ std::stringstream Apartment::Serialize() const
         << HelperFuncs::vectorToString(livingConditions) << ','
         << HelperFuncs::vectorToString(bookingConditions) << ','
         << HelperFuncs::vectorToString(amenities) << ','
-        << HelperFuncs::vectorToString(seasonalPricingPerWeek, std::to_string)
+        << HelperFuncs::vectorToString(seasonalPricingPerWeek, '|',
+                                       std::to_string)
         << ',' << sellerId;
     return out;
 }
@@ -54,7 +55,7 @@ void Apartment::editContainer(std::vector<std::string>* container,
     {
         // FAIL
         return;
-    }
+    }   
 
     if (index < 0)
     {

@@ -24,7 +24,6 @@ class Model : public ISerializable
 
     virtual ~Model()
     {
-        std::cout << "[LOG:Model] Model destroyed: " << id << "\n"; // REMOVE
     }
 
     int GetId() const

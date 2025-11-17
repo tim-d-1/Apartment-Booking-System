@@ -138,21 +138,23 @@
     <ClInclude Include="Admin.h" />
     <ClInclude Include="Apartment.h" />
     <ClInclude Include="AppService.h" />
+    <ClInclude Include="AppUI.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="CsvFileStorage.h" />
     <ClInclude Include="HelperFuncs.h" />
     <ClInclude Include="ISerializable.h" />
     <ClInclude Include="IStorage.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Db.h" />
-    <ClInclude Include="TypeInfo.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Apartment.cpp" />
+    <ClCompile Include="AppService.cpp" />
+    <ClCompile Include="AppUI.cpp" />
     <ClCompile Include="Db.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="TypeInfo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

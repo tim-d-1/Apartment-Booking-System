@@ -1,5 +1,6 @@
 #include <cctype>
 #include <fstream>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -35,21 +36,54 @@ struct HelperFuncs
         return hasNumber && hasLetter;
     }
 
+    /**
+     * Joins elements of a vector into a single string.
+     * * @tparam T The type of elements in the vector.
+     * @param vec The input vector.
+     * @param separator The delimiter between elements (default: "|").
+     * @param converter An optional function to convert T to string.
+     * REQUIRED if T is not std::string or implicitly convertible to string.
+     */
     template <typename T>
-    static std::string vectorToString(
-            const std::vector<T>& vector,
-            std::string (*toStringConverter)(T i) = nullptr)
+    static std::string vectorToString(const std::vector<T>& vec,
+                                      const char separator = '|',
+                                      std::string (*converter)(T) = nullptr)
     {
-        std::string result;
-
-        for (const auto& item : vector)
+        if (vec.empty())
         {
-            if constexpr (!std::is_same<T, std::string>())
-                result += toStringConverter(item) + '|';
-            else
-                result += item + '|';
+            return "";
         }
-        return result;
+
+        std::string out;
+
+        for (size_t i = 0; i < vec.size(); ++i)
+        {
+            if (i > 0)
+            {
+                out += separator;
+            }
+
+            const auto& item = vec[i];
+
+            if constexpr (std::is_same_v<T, std::string>)
+            {
+                out += item;
+            }
+            else
+            {
+                if (converter)
+                {
+                    out += converter(item);
+                }
+                else
+                {
+                    throw std::invalid_argument("Converter required for "
+                                                "non-string types");
+                }
+            }
+        }
+
+        return out;
     }
 
     /**

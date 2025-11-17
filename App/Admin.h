@@ -10,4 +10,8 @@ class Admin : public User
         : User(id, username, password)
     {
     }
+
+    Admin() : User()
+    {
+    }
 };

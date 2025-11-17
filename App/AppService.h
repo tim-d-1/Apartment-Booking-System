@@ -10,6 +10,9 @@ class AppService
   public:
     AppService() : db(Db::GetInstance()), currentUser(nullptr)
     {
+        db.LoadContainer<User>();
+        db.LoadContainer<Admin>();
+        db.LoadContainer<Apartment>();
     }
 
     bool Login(const std::string& username, const std::string& password)
@@ -56,12 +59,6 @@ class AppService
 
     void RegisterUser(const std::string& username, const std::string& password)
     {
-        if (!IsAdmin())
-        {
-            std::cerr << "Permission denied: only admin can register new "
-                         "users\n";
-            return;
-        }
         db.Add(std::make_shared<User>(-1, username, password));
     }
 
