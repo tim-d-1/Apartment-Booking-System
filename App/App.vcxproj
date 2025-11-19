@@ -136,23 +136,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Admin.h" />
+    <ClInclude Include="AdminMenu.h" />
     <ClInclude Include="Apartment.h" />
+    <ClInclude Include="ApartmentMenu.h" />
     <ClInclude Include="AppService.h" />
-    <ClInclude Include="AppUI.h" />
+    <ClInclude Include="AuthMenu.h" />
+    <ClInclude Include="Booking.h" />
+    <ClInclude Include="BookingMenu.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="CsvFileStorage.h" />
+    <ClInclude Include="Date.h" />
     <ClInclude Include="HelperFuncs.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="ISerializable.h" />
     <ClInclude Include="IStorage.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Db.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AppService.cpp" />
-    <ClCompile Include="AppUI.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="AdminMenu.cpp" />
+    <ClCompile Include="ApartmentMenu.cpp" />
+    <ClCompile Include="AuthMenu.cpp" />
+    <ClCompile Include="BookingMenu.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

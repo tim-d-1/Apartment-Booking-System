@@ -1,10 +1,10 @@
 #pragma once
-#define LOGGING 1
+const float MINIMAL_PRICE_PER_DAY = 1;
 
 namespace ConfigPaths
 {
-    inline constexpr const char* Users = "Data/Users.csv";
-    inline constexpr const char* Admins = "Data/Admins.csv";
-    inline constexpr const char* Apartments = "Data/Apartments.csv";
-}
-
+static constexpr const char* Users = "Data/Users.csv";
+static constexpr const char* Admins = "Data/Admins.csv";
+static constexpr const char* Apartments = "Data/Apartments.csv";
+static constexpr const char* Bookings = "bookings.csv";
+} // namespace ConfigPaths

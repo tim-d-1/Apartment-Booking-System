@@ -86,6 +86,43 @@ struct HelperFuncs
         return out;
     }
 
+    template <typename T, size_t Size>
+    static std::string arrayToString(const std::array<T, Size>& arr,
+                                     const char separator = '|',
+                                     std::string (*converter)(T) = nullptr)
+    {
+        std::string out;
+
+        for (size_t i = 0; i < Size; ++i)
+        {
+            if (i > 0)
+            {
+                out += separator;
+            }
+
+            const auto& item = arr[i];
+
+            if constexpr (std::is_same_v<T, std::string>)
+            {
+                out += item;
+            }
+            else
+            {
+                if (converter)
+                {
+                    out += converter(item);
+                }
+                else
+                {
+                    throw std::invalid_argument("Converter required for "
+                                                "non-string types");
+                }
+            }
+        }
+
+        return out;
+    }
+
     /**
      * @brief Extracts each word from a string, divided by a separator.
      * @param line The input string to be processed.
@@ -109,6 +146,30 @@ struct HelperFuncs
                 continue;
             }
             result.push_back(typeConverter(token));
+        }
+
+        return result;
+    }
+
+    template <typename T, size_t Size>
+    static std::array<T, Size> separateLineArr(
+            const std::string& line, const char separator = '|',
+            T (*typeConverter)(const std::string& i) = nullptr)
+    {
+        std::array<T, Size> result{};
+        std::stringstream ss(line);
+        std::string token;
+
+        int i = -1;
+        while (std::getline(ss, token, separator))
+        {
+            ++i;
+            if constexpr (std::is_same<T, std::string>())
+            {
+                result[i] = token;
+                continue;
+            }
+            result[i] = typeConverter(token);
         }
 
         return result;

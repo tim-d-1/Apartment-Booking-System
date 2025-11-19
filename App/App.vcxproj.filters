@@ -16,14 +16,8 @@
     <Filter Include="Data">
       <UniqueIdentifier>{09ad4b51-7953-49a3-816d-5d620dfe4d24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data\cpp">
-      <UniqueIdentifier>{0e194d0b-3021-4754-b2a2-3512ecec161d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="CLI">
+    <Filter Include="UI">
       <UniqueIdentifier>{5bb8a201-81d4-45bd-b064-fe848de4c6d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="CLI\cpp">
-      <UniqueIdentifier>{0a3363d1-463d-4a15-98ec-639c860084fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,20 +54,50 @@
     <ClInclude Include="AppService.h">
       <Filter>Misc</Filter>
     </ClInclude>
-    <ClInclude Include="AppUI.h">
-      <Filter>CLI</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Date.h">
+      <Filter>Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Booking.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="BookingMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ApartmentMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="AdminMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
-    <ClCompile Include="AppUI.cpp">
-      <Filter>CLI\cpp</Filter>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="BookingMenu.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="AppService.cpp">
-      <Filter>Misc</Filter>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ApartmentMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="AuthMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="AdminMenu.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

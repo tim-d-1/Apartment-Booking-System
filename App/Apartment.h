@@ -1,45 +1,50 @@
 #pragma once
+#include "Config.h"
 #include "Model.h"
+#include <array>
 #include <sstream>
 #include <stdexcept>
 
-const float MINIMAL_PRICE_PER_WEEK = 100;
+enum class Season : int
+{
+    Spring = 0,
+    Summer = 1,
+    Autumn = 2,
+    Winter = 3
+};
 
 class Apartment : public Model
 {
     std::string city;
-    std::vector<float> seasonalPricingPerWeek;
+    std::array<float, 4> seasonalDailyPrice{-1, -1, -1, -1};
+
     std::vector<std::string> livingConditions;
     std::vector<std::string> bookingConditions;
     std::vector<std::string> amenities;
+
     int capacity{};
     int sellerId;
 
   public:
-    Apartment()
-        : Model(), seasonalPricingPerWeek(4, -1), capacity(0), sellerId(0)
+    Apartment() : Model(), capacity(0), sellerId(0)
     {
     }
 
     Apartment(int id, const std::string& city, int capacity,
-              const std::vector<std::string>& living,
-              const std::vector<std::string>& booking,
-              const std::vector<std::string>& amen,
-              const std::vector<float>& pricing, int sellerId)
-        : Model(id)
+              const std::vector<std::string>& livingConditions,
+              const std::vector<std::string>& bookingConditions,
+              const std::vector<std::string>& amenities,
+              const std::array<float, 4>& dailyPrice, int sellerId)
+        : Model(id), city(city), seasonalDailyPrice(dailyPrice),
+          livingConditions(livingConditions),
+          bookingConditions(bookingConditions), amenities(amenities),
+          capacity(capacity), sellerId(sellerId)
     {
-        SetCity(city);
-        SetCapacity(capacity);
-        SetSeasonalPricing(pricing);
-        livingConditions = living;
-        bookingConditions = booking;
-        amenities = amen;
-        this->sellerId = sellerId;
     }
 
     Apartment(const Apartment& other)
         : Model(other.id), city(other.city),
-          seasonalPricingPerWeek(other.seasonalPricingPerWeek),
+          seasonalDailyPrice(other.seasonalDailyPrice),
           livingConditions(other.livingConditions),
           bookingConditions(other.bookingConditions),
           amenities(other.amenities), capacity(other.capacity),
@@ -49,7 +54,7 @@ class Apartment : public Model
 
     Apartment(Apartment&& other) noexcept
         : Model(other.id), city(std::move(other.city)),
-          seasonalPricingPerWeek(std::move(other.seasonalPricingPerWeek)),
+          seasonalDailyPrice(std::move(other.seasonalDailyPrice)),
           livingConditions(std::move(other.livingConditions)),
           bookingConditions(std::move(other.bookingConditions)),
           amenities(std::move(other.amenities)), capacity(other.capacity),
@@ -64,7 +69,7 @@ class Apartment : public Model
         {
             id = other.id;
             city = other.city;
-            seasonalPricingPerWeek = other.seasonalPricingPerWeek;
+            seasonalDailyPrice = other.seasonalDailyPrice;
             livingConditions = other.livingConditions;
             bookingConditions = other.bookingConditions;
             amenities = other.amenities;
@@ -80,7 +85,7 @@ class Apartment : public Model
         {
             id = other.id;
             city = std::move(other.city);
-            seasonalPricingPerWeek = std::move(other.seasonalPricingPerWeek);
+            seasonalDailyPrice = std::move(other.seasonalDailyPrice);
             livingConditions = std::move(other.livingConditions);
             bookingConditions = std::move(other.bookingConditions);
             amenities = std::move(other.amenities);
@@ -108,17 +113,12 @@ class Apartment : public Model
         capacity = c;
     }
 
-    void SetSeasonalPricing(const std::vector<float>& p)
+    void EditDailyPrice(Season season, float price)
     {
-        if (p.size() != 4)
-            throw std::invalid_argument("Seasonal pricing must contain exactly "
-                                        "4 values.");
+        if (price < MINIMAL_PRICE_PER_DAY / 7)
+            throw std::runtime_error("Price too low");
 
-        for (float price : p)
-            if (price < MINIMAL_PRICE_PER_WEEK)
-                throw std::invalid_argument("Price is below minimal allowed.");
-
-        seasonalPricingPerWeek = p;
+        seasonalDailyPrice[(int)season] = price;
     }
 
     int GetSellerId() const
@@ -158,11 +158,11 @@ class Apartment : public Model
         return capacity;
     }
 
-    float GetSeasonPrice(int season) const
+    float GetDailyPrice(int season) const
     {
-        if (season < 0 || season >= seasonalPricingPerWeek.size())
+        if (season < 0 || season >= seasonalDailyPrice.size())
             throw std::out_of_range("Invalid season index");
-        return seasonalPricingPerWeek[season];
+        return seasonalDailyPrice[season];
     }
 
     void EditCapacity(int newCapacity)
@@ -213,23 +213,13 @@ class Apartment : public Model
         EditVector(amenities, "", index);
     }
 
-    void EditSeasonalPricingPerWeek(int season, float price)
-    {
-        if (season < 0 || season > 3)
-            throw std::out_of_range("Season index invalid.");
-        if (price < MINIMAL_PRICE_PER_WEEK)
-            throw std::invalid_argument("Price too low.");
-
-        seasonalPricingPerWeek[season] = price;
-    }
-
     virtual std::stringstream Serialize() const override
     {
         std::stringstream ss;
 
         ss << id << "," << city << "," << capacity << ","
-           << HelperFuncs::vectorToString(seasonalPricingPerWeek, '|') << ","
-           << HelperFuncs::vectorToString(livingConditions, '|') << ","
+           << HelperFuncs::arrayToString<float, 4>(seasonalDailyPrice, '|')
+           << "," << HelperFuncs::vectorToString(livingConditions, '|') << ","
            << HelperFuncs::vectorToString(bookingConditions, '|') << ","
            << HelperFuncs::vectorToString(amenities, '|') << "," << sellerId;
 
@@ -246,7 +236,7 @@ class Apartment : public Model
         SetCity(params[1]);
         SetCapacity(std::stoi(params[2]));
 
-        seasonalPricingPerWeek = HelperFuncs::separateLine<float>(
+        seasonalDailyPrice = HelperFuncs::separateLineArr<float, 4>(
                 params[3], '|',
                 [](const std::string& s) { return std::stof(s); });
 

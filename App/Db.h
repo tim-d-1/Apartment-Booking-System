@@ -5,6 +5,7 @@
 #include "CsvFileStorage.h"
 #include "Types.h"
 #include "User.h"
+#include "Booking.h"
 
 #include <algorithm>
 #include <iostream>
@@ -21,7 +22,9 @@ class Db final
     Container<User> users;
     Container<Admin> admins;
     Container<Apartment> apartments;
-
+    Container<Booking> bookings;
+    
+    int lastBookingId{0};
     int lastUserId{0};
     int lastAdminId{0};
     int lastApartmentId{0};
@@ -59,6 +62,8 @@ class Db final
             return admins;
         else if constexpr (std::is_same_v<T, Apartment>)
             return apartments;
+        else if constexpr (std::is_same_v<T, Booking>)
+            return bookings;
         else
             throw std::logic_error("Unsupported model type");
     }
@@ -71,6 +76,8 @@ class Db final
             return lastAdminId;
         else if constexpr (std::is_same_v<T, Apartment>)
             return lastApartmentId;
+        else if constexpr (std::is_same_v<T, Booking>)
+            return lastBookingId;
         else
             throw std::logic_error("Unsupported model type");
     }
@@ -83,6 +90,8 @@ class Db final
             return ConfigPaths::Admins;
         else if constexpr (std::is_same_v<T, Apartment>)
             return ConfigPaths::Apartments;
+        else if constexpr (std::is_same_v<T, Booking>)
+            return ConfigPaths::Bookings;
         else
             throw std::logic_error("Unsupported model type");
     }
@@ -117,10 +126,10 @@ class Db final
 
                 lastId = std::max(lastId, obj->GetId());
             }
-            catch (const std::exception& e)
+            catch (const std::exception& ex)
             {
 #ifdef LOGGING
-                std::cerr << "[Error] Failed to load: " << e.what()
+                std::cerr << "[Error] Failed to load: " << ex.what()
                           << "\nLine: " << line << '\n';
 #endif
             }
