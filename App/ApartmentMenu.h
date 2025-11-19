@@ -14,5 +14,7 @@ class ApartmentMenu
     static void Filter(AppService& service);
     static void Sort(AppService& service);
     static void ViewDetails(AppService& service);
+    static void EditApartment(AppService& service);
+    static void AddApartment(AppService& service);
 };
 } // namespace UI

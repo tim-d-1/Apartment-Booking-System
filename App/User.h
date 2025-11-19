@@ -56,7 +56,10 @@ class User : public Model
         return *this;
     }
 
-    virtual ~User() override = default;
+    virtual ~User() override
+    {
+        std::cout << "User object " << id << " destroyed.\n";
+    }
 
     void SetUsername(const std::string& u)
     {

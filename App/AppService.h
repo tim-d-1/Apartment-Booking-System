@@ -191,16 +191,17 @@ class AppService
             throw std::runtime_error("Invalid date range");
 
         float total = 0.f;
+        int days = DaysBetween(from, to);
 
         for (Date d = from; d < to; d = d.NextDay())
         {
             Season s = SeasonFromDate(d);
-            float price = apt->GetDailyPrice((int)s);
+            total += apt->GetDailyPrice((int)s);
+        }
 
-            if (price < MINIMAL_PRICE_PER_DAY)
-                throw std::runtime_error("Daily price below allowed minimum");
-
-            total += price;
+        if (days >= 7)
+        {
+            total *= 0.90f;
         }
 
         return total;

@@ -97,7 +97,10 @@ class Apartment : public Model
         return *this;
     }
 
-    virtual ~Apartment() override = default;
+    virtual ~Apartment() override
+    {
+        std::cout << "Apartment object " << id << " destroyed.\n";
+    }
 
     void SetCity(const std::string& c)
     {
