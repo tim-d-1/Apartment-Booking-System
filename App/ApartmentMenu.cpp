@@ -15,6 +15,7 @@ void ApartmentMenu::Show(AppService& service)
                   << "3. Sort\n"
                   << "4. View details\n"
                   << "5. Add Apartment\n"
+                  << "6. Edit Apartment\n"
                   << "0. Back\n";
 
         int choice = Input::GetInt("Choose: ");
@@ -35,6 +36,9 @@ void ApartmentMenu::Show(AppService& service)
             break;
         case 5:
             AddApartment(service);
+            break;
+        case 6:
+            EditApartment(service);
             break;
         case 0:
             return;
