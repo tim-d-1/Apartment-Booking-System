@@ -1,5 +1,6 @@
 #include "ApartmentMenu.h"
 #include "Input.h"
+#include "Apartment.h"
 #include <iostream>
 
 using namespace UI;
@@ -250,5 +251,43 @@ void ApartmentMenu::Sort(AppService& service)
     }
     default:
         return;
+    }
+}
+
+void UI::ApartmentMenu::ViewDetails(AppService& service)
+{
+    int id = Input::GetInt("Enter apartment ID: ");
+
+    auto ap = service.GetApartmentById(id);
+    if (!ap)
+    {
+        std::cout << "Not found.\n";
+        return;
+    }
+
+    std::cout << "\n=== APARTMENT " << id << " ===\n";
+    std::cout << "City: " << ap->GetCity() << "\n";
+    std::cout << "Capacity: " << ap->GetCapacity() << "\n";
+    std::cout << "Owner ID: " << ap->GetSellerId() << "\n";
+
+    std::cout << "\n--- Living Conditions ---\n";
+    for (auto& s : ap->GetLivingConditions())
+        std::cout << "- " << s << "\n";
+
+    std::cout << "\n--- Booking Conditions ---\n";
+    for (auto& s : ap->GetBookingConditions())
+        std::cout << "- " << s << "\n";
+
+    std::cout << "\n--- Amenities ---\n";
+    for (auto& s : ap->GetAmenities())
+        std::cout << "- " << s << "\n";
+
+    std::cout << "\n--- Pricing (Daily / Weekly) ---\n";
+    for (int s = 0; s < 4; ++s)
+    {
+        float daily = ap->GetDailyPrice(s);
+        float weekly = daily * 7;
+        std::cout << HelperFuncs::SeasonName((Season)s) << ": " << daily
+                  << " / " << weekly << " UAH\n";
     }
 }

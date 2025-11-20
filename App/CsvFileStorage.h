@@ -1,10 +1,10 @@
 #pragma once
-#include "IStorage.h"
+#include "IStorageProvider.h"
 #include <filesystem>
 #include <fstream>
 #include "Config.h"
 
-class CsvFileStorage : public IStorage
+class CsvFileStorage : public IStorageProvider
 {
   public:
     std::vector<std::string> ReadAll(const std::string& path) override

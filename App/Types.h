@@ -14,3 +14,11 @@ using Predicate = std::function<bool(const std::shared_ptr<T>&)>;
 
 template <typename T>
 using UpdaterFunc = std::function<void(std::shared_ptr<T>)>;
+
+enum class Season : int
+{
+    Spring = 0,
+    Summer = 1,
+    Autumn = 2,
+    Winter = 3
+};

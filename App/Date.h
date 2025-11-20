@@ -1,4 +1,5 @@
 #pragma once
+#include "Types.h"
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -112,7 +113,65 @@ struct Date
     {
         return !(*this < o);
     }
+
+    static int DaysBetween(const Date& start, const Date& end)
+    {
+        Date cur = start;
+        int cnt = 0;
+        auto nextDay = [](Date d)
+        {
+            d.d++;
+            static int mdays[] = {0,  31, 28, 31, 30, 31, 30,
+                                  31, 31, 30, 31, 30, 31};
+            int maxd = mdays[d.m];
+            if (d.m == 2)
+            {
+                bool leap =
+                        ((d.y % 4 == 0 && d.y % 100 != 0) || (d.y % 400 == 0));
+                if (leap)
+                    maxd = 29;
+            }
+            if (d.d > maxd)
+            {
+                d.d = 1;
+                d.m++;
+                if (d.m > 12)
+                {
+                    d.m = 1;
+                    d.y++;
+                }
+            }
+            return d;
+        };
+
+        while (cur < end)
+        {
+            cur = nextDay(cur);
+            cnt++;
+            if (cnt > 10000)
+                break;
+        }
+        return cnt;
+    }
 };
+
+static Season SeasonFromDate(const Date& d)
+{
+    // March (3), April (4), May (5)
+    if (d.m >= 3 && d.m <= 5)
+        return Season::Spring;
+
+    // June (6), July (7), August (8)
+    if (d.m >= 6 && d.m <= 8)
+        return Season::Summer;
+
+    // September (9), October (10), November (11)
+    if (d.m >= 9 && d.m <= 11)
+        return Season::Autumn;
+
+    // December (12), January (1), February (2)
+    return Season::Winter;
+}
 
 inline bool RangesOverlap(const Date& aStart, const Date& aEnd,
                           const Date& bStart, const Date& bEnd)

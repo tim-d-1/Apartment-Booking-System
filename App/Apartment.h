@@ -5,14 +5,6 @@
 #include <sstream>
 #include <stdexcept>
 
-enum class Season : int
-{
-    Spring = 0,
-    Summer = 1,
-    Autumn = 2,
-    Winter = 3
-};
-
 class Apartment : public Model
 {
     std::string city;
@@ -216,12 +208,27 @@ class Apartment : public Model
         EditVector(amenities, "", index);
     }
 
+    std::vector<std::string> GetLivingConditions()
+    {
+        return livingConditions;
+    }
+
+    std::vector<std::string> GetAmenities()
+    {
+        return amenities;
+    }
+
+    std::vector<std::string> GetBookingConditions()
+    {
+        return bookingConditions;
+    }
+
     virtual std::stringstream Serialize() const override
     {
         std::stringstream ss;
 
         ss << id << "," << city << "," << capacity << ","
-           << HelperFuncs::arrayToString<float, 4>(seasonalDailyPrice, '|')
+           << HelperFuncs::arrayToString<float, 4>(seasonalDailyPrice, '|', std::to_string)
            << "," << HelperFuncs::vectorToString(livingConditions, '|') << ","
            << HelperFuncs::vectorToString(bookingConditions, '|') << ","
            << HelperFuncs::vectorToString(amenities, '|') << "," << sellerId;

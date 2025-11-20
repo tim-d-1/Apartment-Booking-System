@@ -36,7 +36,7 @@
     <ClInclude Include="Admin.h">
       <Filter>Models</Filter>
     </ClInclude>
-    <ClInclude Include="IStorage.h">
+    <ClInclude Include="IStorageProvider.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Apartment.h">

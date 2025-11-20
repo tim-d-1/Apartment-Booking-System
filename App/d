@@ -1,0 +1,16 @@
+===== BOOKING RECEIPT =====
+Booking ID: 1
+Apartment ID: 1
+User ID: 1
+From: 2025-11-22
+To: 2025-12-22
+
+--- Breakdown by season ---
+Осінь: 9 days * 400 = 3600 UAH
+Зима: 21 days * 600 = 12600 UAH
+
+Total: 16200 UAH
+Avg daily: 540 UAH/day
+Weekly equivalent: 3780 UAH/week
+Paid: no
+Refunded: no

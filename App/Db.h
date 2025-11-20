@@ -17,7 +17,7 @@
 class Db final
 {
   private:
-    std::unique_ptr<IStorage> storage;
+    std::unique_ptr<IStorageProvider> storage;
 
     Container<User> users;
     Container<Admin> admins;
@@ -34,7 +34,7 @@ class Db final
     {
     }
 
-    Db(std::unique_ptr<IStorage> customStorage)
+    Db(std::unique_ptr<IStorageProvider> customStorage)
         : storage(std::move(customStorage))
     {
     }
@@ -126,7 +126,7 @@ class Db final
 
                 lastId = std::max(lastId, obj->GetId());
             }
-            catch (const std::exception& ex)
+            catch (...)
             {
 #ifdef LOGGING
                 std::cerr << "[Error] Failed to load: " << ex.what()

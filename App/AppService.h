@@ -142,72 +142,6 @@ class AppService
         return true;
     }
 
-    static int DaysBetween(const Date& start, const Date& end)
-    {
-        Date cur = start;
-        int cnt = 0;
-        auto nextDay = [](Date d)
-        {
-            d.d++;
-            static int mdays[] = {0,  31, 28, 31, 30, 31, 30,
-                                  31, 31, 30, 31, 30, 31};
-            int maxd = mdays[d.m];
-            if (d.m == 2)
-            {
-                bool leap =
-                        ((d.y % 4 == 0 && d.y % 100 != 0) || (d.y % 400 == 0));
-                if (leap)
-                    maxd = 29;
-            }
-            if (d.d > maxd)
-            {
-                d.d = 1;
-                d.m++;
-                if (d.m > 12)
-                {
-                    d.m = 1;
-                    d.y++;
-                }
-            }
-            return d;
-        };
-
-        while (cur < end)
-        {
-            cur = nextDay(cur);
-            cnt++;
-            if (cnt > 10000)
-                break;
-        }
-        return cnt;
-    }
-
-    float CalculateBookingPrice(std::shared_ptr<Apartment> apt, Date from,
-                                Date to)
-    {
-        if (!apt)
-            throw std::runtime_error("Apartment not found");
-        if (!(from < to))
-            throw std::runtime_error("Invalid date range");
-
-        float total = 0.f;
-        int days = DaysBetween(from, to);
-
-        for (Date d = from; d < to; d = d.NextDay())
-        {
-            Season s = SeasonFromDate(d);
-            total += apt->GetDailyPrice((int)s);
-        }
-
-        if (days >= 7)
-        {
-            total *= 0.90f;
-        }
-
-        return total;
-    }
-
-
     std::shared_ptr<Apartment> AddApartment(const std::string& city, int capacity,
                       const std::vector<std::string>& livingConditions,
                       const std::vector<std::string>& bookingConditions,
@@ -236,6 +170,36 @@ class AppService
         return apt;
     }
 
+    BookingPriceBreakdown CalculateBookingBreakdown(int apartmentId,
+                                                    const Date& from,
+                                                    const Date& to) const
+    {
+        auto apt = GetApartmentById(apartmentId);
+
+        if (!(from < to))
+            throw std::runtime_error("Invalid date range");
+
+        BookingPriceBreakdown result;
+
+        for (Date d = from; d < to; d = d.NextDay())
+        {
+            Season s = SeasonFromDate(d);
+            int si = static_cast<int>(s);
+
+            float daily = apt->GetDailyPrice((int)s);
+            if (daily < 0)
+                throw std::runtime_error("Price not set for given season");
+
+            result.dailyPrice[si] = daily;
+            result.daysPerSeason[si] += 1;
+            result.pricePerSeason[si] += daily;
+            result.total += daily;
+        }
+
+        return result;
+    }
+
+
     std::shared_ptr<Booking> CreateBooking(int apartmentId, const Date& from, const Date& to)
     {
         if (!IsAuthenticated())
@@ -252,7 +216,8 @@ class AppService
             throw std::runtime_error("Apartment is not available for the "
                                      "requested dates");
 
-        float price = CalculateBookingPrice(aptPtr, from, to);
+        auto breakdown = CalculateBookingBreakdown(apartmentId, from, to);
+        float price = breakdown.total;
 
         auto booking =
                 std::make_shared<Booking>(-1, apartmentId, currentUser->GetId(),
@@ -364,31 +329,6 @@ class AppService
         f << "Paid: " << (b->IsPaid() ? "yes" : "no") << "\n";
         f << "Refunded: " << (b->IsRefunded() ? "yes" : "no") << "\n";
         f.close();
-    }
-
-    float CalculateBookingPrice(int apartmentId, Date from, Date to)
-    {
-        auto apt = db.Search<Apartment>([&](auto a)
-                                        { return a->GetId() == apartmentId; });
-
-        if (!apt)
-            throw std::runtime_error("Apartment not found");
-        if (!(from < to))
-            throw std::runtime_error("Invalid date range");
-
-        float total = 0.f;
-        for (Date d = from; d < to; d = d.NextDay())
-        {
-            Season s = SeasonFromDate(d);
-            float price = apt->GetDailyPrice(int(s));
-
-            if (price < 0)
-                throw std::runtime_error("Price not set for season");
-
-            total += price;
-        }
-
-        return total;
     }
 
 
@@ -513,22 +453,4 @@ class AppService
     {
         return db.SearchAll(pred);
     };
-
-    static Season SeasonFromDate(const Date& d)
-    {
-        // March (3), April (4), May (5)
-        if (d.m >= 3 && d.m <= 5)
-            return Season::Spring;
-
-        // June (6), July (7), August (8)
-        if (d.m >= 6 && d.m <= 8)
-            return Season::Summer;
-
-        // September (9), October (10), November (11)
-        if (d.m >= 9 && d.m <= 11)
-            return Season::Autumn;
-
-        // December (12), January (1), February (2)
-        return Season::Winter;
-    }
 };

@@ -149,7 +149,7 @@
     <ClInclude Include="HelperFuncs.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="ISerializable.h" />
-    <ClInclude Include="IStorage.h" />
+    <ClInclude Include="IStorageProvider.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Db.h" />

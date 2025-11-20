@@ -3,6 +3,17 @@
 #include "Model.h"
 #include <sstream>
 
+struct BookingPriceBreakdown
+{
+    float total = 0.f;
+
+    int daysPerSeason[4] = {0, 0, 0, 0};
+
+    float pricePerSeason[4] = {0, 0, 0, 0};
+
+    float dailyPrice[4] = {0, 0, 0, 0};
+};
+
 class Booking : public Model
 {
     int apartmentId{};

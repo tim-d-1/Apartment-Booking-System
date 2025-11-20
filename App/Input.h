@@ -1,8 +1,8 @@
 #pragma once
-
-#pragma once
 #include <iostream>
 #include <limits>
+#include <vector>
+#include <algorithm>
 #include <string>
 
 struct Input

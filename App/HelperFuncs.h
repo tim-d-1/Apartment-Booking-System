@@ -3,6 +3,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include "Types.h"
 
 struct HelperFuncs
 {
@@ -34,6 +35,22 @@ struct HelperFuncs
         }
 
         return hasNumber && hasLetter;
+    }
+
+    static const char* SeasonName(Season s)
+    {
+        switch (s)
+        {
+        case Season::Spring:
+            return "Весна";
+        case Season::Summer:
+            return "Літо";
+        case Season::Autumn:
+            return "Осінь";
+        case Season::Winter:
+            return "Зима";
+        }
+        return "Невідомо";
     }
 
     /**

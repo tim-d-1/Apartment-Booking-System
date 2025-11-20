@@ -43,21 +43,18 @@ void UI::MainMenu::ShowGuestMenu(AppService& service)
 void UI::MainMenu::ShowUserMenu(AppService& service)
 {
     std::cout << "\n--- User Menu ---\n"
-              << "1. List apartments\n"
-              << "2. Search / Filters\n"
-              << "3. Booking menu\n"
-              << "4. Logout\n"
+              << "1. Apartments\n"
+              << "2. Booking menu\n"
+              << "3. Logout\n"
               << "0. Exit\n";
 
     switch (Input::GetInt("> "))
     {
     case 1:
-        UI::ApartmentMenu::ListAll(service);
+        UI::ApartmentMenu::Show(service);
         break;
+
     case 2:
-        UI::ApartmentMenu::Search(service);
-        break;
-    case 3:
         std::cout << "\n--- Booking Actions ---\n"
                   << "1. Make booking\n"
                   << "2. List my bookings\n"
@@ -85,7 +82,7 @@ void UI::MainMenu::ShowUserMenu(AppService& service)
         }
         break;
 
-    case 4:
+    case 3:
         service.Logout();
         break;
     case 0:
