@@ -42,15 +42,15 @@ struct HelperFuncs
         switch (s)
         {
         case Season::Spring:
-            return "Весна";
+            return "Spring";
         case Season::Summer:
-            return "Літо";
+            return "Summer";
         case Season::Autumn:
-            return "Осінь";
+            return "Autumn";
         case Season::Winter:
-            return "Зима";
+            return "Winter";
         }
-        return "Невідомо";
+        return "Unknown";
     }
 
     /**
