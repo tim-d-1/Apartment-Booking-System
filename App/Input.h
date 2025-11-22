@@ -16,7 +16,7 @@ struct Input
             if (std::cin >> x)
                 break;
 
-            std::cout << "Invalid number. Try again.\n";
+            std::cout << "Невірний номер. Повторіть спробу.\n ";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
@@ -32,7 +32,7 @@ struct Input
             if (std::cin >> x)
                 break;
 
-            std::cout << "Invalid number. Try again.\n";
+            std::cout << "Невірний номер. Повторіть спробу.\n ";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
@@ -51,11 +51,11 @@ struct Input
     static std::vector<std::string> GetListInput(const std::string& itemName)
     {
         std::vector<std::string> list;
-        std::cout << "Enter " << itemName << " (type 'end' to finish):\n";
+        std::cout << "Введіть " << itemName << "(введіть 'end', щоб завершити):\n";
         while (true)
         {
             std::string item = Input::GetLine("- ");
-            if (item == "end")
+            if (item == "end ")
                 break;
             if (!item.empty())
             {

@@ -66,15 +66,15 @@ class AppService
     void RegisterUser(const std::string& username, const std::string& password)
     {
         if (username.empty())
-            throw std::invalid_argument("Username cannot be empty");
+            throw std::invalid_argument("Ім'я користувача не може бути пустим ");
         if (!HelperFuncs::isValidPassword(password))
-            throw std::invalid_argument("Invalid password format");
+            throw std::invalid_argument("Недійсний формат пароля ");
 
         auto exists = db.Search<User>([&](auto u)
                                       { return u->GetUsername() == username; });
 
         if (exists)
-            throw std::runtime_error("User already exists");
+            throw std::runtime_error("Користувач уже існує ");
 
         db.Add(std::make_shared<User>(-1, username, password));
     }
@@ -100,10 +100,10 @@ class AppService
     void ChangePassword(const std::string& oldPass, const std::string& newPass)
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
 
         if (!HelperFuncs::isValidPassword(newPass))
-            throw std::invalid_argument("Invalid new password");
+            throw std::invalid_argument("Недійсний новий пароль ");
 
         currentUser->ChangePassword(oldPass, newPass);
         db.SaveContainer<User>();
@@ -112,7 +112,7 @@ class AppService
     std::vector<std::string> ListUsers() const
     {
         if (!IsAdmin())
-            throw std::runtime_error("Permission denied");
+            throw std::runtime_error("У дозволі відмовлено ");
 
         std::vector<std::string> result;
 
@@ -126,7 +126,7 @@ class AppService
                               const Date& to) const
     {
         if (!(from < to))
-            throw std::invalid_argument("Invalid date range");
+            throw std::invalid_argument("Недійсний діапазон дат ");
 
         auto bookingsFor = db.SearchAll<Booking>(
                 [&](std::shared_ptr<Booking> b)
@@ -149,17 +149,17 @@ class AppService
                       const std::array<float, 4>& dailyPrice)
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
 
         if (city.empty())
-            throw std::invalid_argument("City cannot be empty");
+            throw std::invalid_argument("Місто не може бути порожнім ");
         if (capacity <= 0)
-            throw std::invalid_argument("Capacity must be > 0");
+            throw std::invalid_argument("Ємність має бути > 0 ");
 
         for (float p : dailyPrice)
             if (p < MINIMAL_PRICE_PER_DAY)
                 throw std::invalid_argument(
-                        "Season price below minimum\nMin: " +
+                        "Сезонна ціна нижче мінімальної\nМін.: " +
                         std::to_string(MINIMAL_PRICE_PER_DAY));
 
         auto apt = std::make_shared<Apartment>(
@@ -177,7 +177,7 @@ class AppService
         auto apt = GetApartmentById(apartmentId);
 
         if (!(from < to))
-            throw std::runtime_error("Invalid date range");
+            throw std::runtime_error("Недійсний діапазон дат ");
 
         BookingPriceBreakdown result;
 
@@ -188,7 +188,7 @@ class AppService
 
             float daily = apt->GetDailyPrice((int)s);
             if (daily < 0)
-                throw std::runtime_error("Price not set for given season");
+                throw std::runtime_error("Ціна не встановлена ​​для даного сезону ");
 
             result.dailyPrice[si] = daily;
             result.daysPerSeason[si] += 1;
@@ -203,18 +203,18 @@ class AppService
     std::shared_ptr<Booking> CreateBooking(int apartmentId, const Date& from, const Date& to)
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
         if (!(from < to))
-            throw std::invalid_argument("Invalid date range");
+            throw std::invalid_argument("Недійсний діапазон дат ");
 
         auto aptPtr = db.Search<Apartment>(
                 [&](auto a) { return a->GetId() == apartmentId; });
         if (!aptPtr)
-            throw std::runtime_error("Apartment not found");
+            throw std::runtime_error("Квартира не знайдена ");
 
         if (!IsApartmentAvailable(apartmentId, from, to))
-            throw std::runtime_error("Apartment is not available for the "
-                                     "requested dates");
+            throw std::runtime_error("Квартира недоступна для "
+                                     "запитані дати ");
 
         auto breakdown = CalculateBookingBreakdown(apartmentId, from, to);
         float price = breakdown.total;
@@ -229,7 +229,7 @@ class AppService
     Container<Booking> GetUserBookings() const
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
         return db.SearchAll<Booking>(
                 [&](auto b) { return b->GetUserId() == currentUser->GetId(); });
     }
@@ -243,23 +243,23 @@ class AppService
     Container<Booking> GetAllBookings() const
     {
         if (!IsAdmin())
-            throw std::runtime_error("Permission denied");
+            throw std::runtime_error("У дозволі відмовлено ");
         return db.GetAll<Booking>();
     }
 
     bool CancelBooking(int bookingId)
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
 
         auto booking = db.Search<Booking>([&](auto b)
                                           { return b->GetId() == bookingId; });
         if (!booking)
-            throw std::runtime_error("Booking not found");
+            throw std::runtime_error("Бронювання не знайдено ");
 
         if (booking->GetUserId() != currentUser->GetId() && !IsAdmin())
-            throw std::runtime_error("Permission denied to cancel this "
-                                     "booking");
+            throw std::runtime_error("Відмовлено в дозволі на скасування цього "
+                                     "бронювання ");
 
         if (booking->IsPaid())
         {
@@ -282,14 +282,14 @@ class AppService
     bool PayBooking(int bookingId)
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
 
         auto booking = db.Search<Booking>([&](auto b)
                                           { return b->GetId() == bookingId; });
         if (!booking)
-            throw std::runtime_error("Booking not found");
+            throw std::runtime_error("Бронювання не знайдено ");
         if (booking->GetUserId() != currentUser->GetId())
-            throw std::runtime_error("Permission denied");
+            throw std::runtime_error("У дозволі відмовлено ");
 
         db.Update<Booking>([&](auto b) { return b->GetId() == bookingId; },
                            [&](auto b) { b->MarkPaid(); });
@@ -299,15 +299,15 @@ class AppService
     bool RefundBooking(int bookingId)
     {
         if (!IsAuthenticated() || !IsAdmin())
-            throw std::runtime_error("Permission denied");
+            throw std::runtime_error("У дозволі відмовлено ");
 
         auto booking = db.Search<Booking>([&](auto b)
                                           { return b->GetId() == bookingId; });
         if (!booking)
-            throw std::runtime_error("Booking not found");
+            throw std::runtime_error("Бронювання не знайдено ");
 
         if (!booking->IsPaid())
-            throw std::runtime_error("Booking is not paid");
+            throw std::runtime_error("Бронювання не оплачується ");
 
         db.Update<Booking>([&](auto b) { return b->GetId() == bookingId; },
                            [&](auto b) { b->MarkRefunded(); });
@@ -318,16 +318,16 @@ class AppService
     {
         auto b = GetBookingById(bookingId);
         if (!b)
-            throw std::runtime_error("Booking not found");
+            throw std::runtime_error("Бронювання не знайдено ");
         std::ofstream f(filename);
-        f << "Booking ID: " << b->GetId() << "\n";
-        f << "Apartment ID: " << b->GetApartmentId() << "\n";
-        f << "User ID: " << b->GetUserId() << "\n";
-        f << "From: " << b->GetFrom().ToString() << "\n";
-        f << "To: " << b->GetTo().ToString() << "\n";
-        f << "Total: " << b->GetTotalPayment() << "\n";
-        f << "Paid: " << (b->IsPaid() ? "yes" : "no") << "\n";
-        f << "Refunded: " << (b->IsRefunded() ? "yes" : "no") << "\n";
+        f << "Ідентифікатор бронювання: " << b->GetId() << "\n ";
+        f << "ID квартири: " << b->GetApartmentId() << "\n ";
+        f << "ID користувача: " << b->GetUserId() << "\n ";
+        f << "Від: " << b->GetFrom().ToString() << "\n ";
+        f << "до: " << b->GetTo().ToString() << "\n ";
+        f << "Всього: " << b->GetTotalPayment() << "\n ";
+        f << "Оплачено: " << (b->IsPaid() ? "так" : "ні") << "\n ";
+        f << "Повернено: " << (b->IsRefunded() ? "так" : "ні") << "\n ";
         f.close();
     }
 
@@ -335,7 +335,7 @@ class AppService
     bool RemoveApartment(int id)
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
 
         if (IsAdmin())
         {
@@ -354,7 +354,7 @@ class AppService
     bool UpdateApartmentCity(int id, const std::string& newCity)
     {
         if (newCity.empty())
-            throw std::invalid_argument("City cannot be empty");
+            throw std::invalid_argument("Місто не може бути порожнім ");
 
         return db.Update<Apartment>([&](auto ap) { return ap->GetId() == id; },
                                     [&](auto ap) { ap->SetCity(newCity); });
@@ -363,7 +363,7 @@ class AppService
     bool UpdateApartmentCapacity(int id, int newCapacity)
     {
         if (newCapacity <= 0)
-            throw std::invalid_argument("Capacity must be > 0");
+            throw std::invalid_argument("Ємність має бути > 0 ");
 
         return db.Update<Apartment>([&](auto ap) { return ap->GetId() == id; },
                                     [&](auto ap)
@@ -385,7 +385,7 @@ class AppService
     Container<Apartment> GetMyApartments() const
     {
         if (!IsAuthenticated())
-            throw std::runtime_error("Not logged in");
+            throw std::runtime_error("Не ввійшли в систему ");
 
         return db.SearchAll<Apartment>(
                 [&](auto ap)

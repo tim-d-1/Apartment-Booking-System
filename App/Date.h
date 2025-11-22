@@ -20,7 +20,7 @@ struct Date
     void Validate() const
     {
         if (y < 1900 || m < 1 || m > 12 || d < 1 || d > 31)
-            throw std::invalid_argument("Invalid date");
+            throw std::invalid_argument("Недійсна дата ");
 
         static int mdays[] = {0,  31, 28, 31, 30, 31, 30,
                               31, 31, 30, 31, 30, 31};
@@ -33,13 +33,13 @@ struct Date
                 maxd = 29;
         }
         if (d > maxd)
-            throw std::invalid_argument("Invalid day for month");
+            throw std::invalid_argument("Недійсний день місяця ");
     }
 
     static Date FromString(const std::string& s)
     {
         if (s.size() != 10 || s[4] != '-' || s[7] != '-')
-            throw std::invalid_argument("Date format must be YYYY-MM-DD");
+            throw std::invalid_argument("Формат дати має бути РРРР-ММ-ДД ");
 
         int yy = std::stoi(s.substr(0, 4));
         int mm = std::stoi(s.substr(5, 2));
@@ -177,7 +177,7 @@ inline bool RangesOverlap(const Date& aStart, const Date& aEnd,
                           const Date& bStart, const Date& bEnd)
 {
     if (!(aStart < aEnd) || !(bStart < bEnd))
-        throw std::invalid_argument("Invalid date range (start must be < end)");
+        throw std::invalid_argument("Недійсний діапазон дат (початок має бути <кінець) ");
 
     return (aStart < bEnd) && (bStart < aEnd);
 }

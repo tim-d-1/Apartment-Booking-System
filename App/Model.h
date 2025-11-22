@@ -34,7 +34,7 @@ class Model : public ISerializable
     void SetId(int newId)
     {
         if (newId < 0)
-            throw std::invalid_argument("ID must be non-negative");
+            throw std::invalid_argument("ID має бути невід’ємним ");
 
         id = newId;
     }

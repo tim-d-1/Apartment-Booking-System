@@ -29,7 +29,7 @@ class CsvFileStorage : public IStorageProvider
         if (!file.is_open())
         {
             #ifdef LOGGING
-                std::cerr << "[Error] File " << path << " wasn't open\n";
+                std::cerr << "[Помилка] Файл " << path << "не було відкрито\n ";
             #endif
             return;
         }

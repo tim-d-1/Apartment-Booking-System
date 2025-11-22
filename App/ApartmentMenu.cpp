@@ -10,16 +10,16 @@ void ApartmentMenu::Show(AppService& service)
 {
     while (true)
     {
-        std::cout << "\n=== APARTMENTS ===\n"
-                  << "1. List all\n"
-                  << "2. Filter\n"
-                  << "3. Sort\n"
-                  << "4. View details\n"
-                  << "5. Add Apartment\n"
-                  << "6. Edit Apartment\n"
-                  << "0. Back\n";
+        std::cout << "\n=== КВАРТИРИ ===\n "
+                  << "1. Перерахувати всі\n "
+                  << "2. Фільтр\n "
+                  << "3. Сортувати\n "
+                  << "4. Переглянути деталі\n "
+                  << "5. Додати квартиру\n "
+                  << "6. Редагувати квартиру\n "
+                  << "0. Назад\n ";
 
-        int choice = Input::GetInt("Choose: ");
+        int choice = Input::GetInt("Виберіть: ");
 
         switch (choice)
         {
@@ -44,57 +44,57 @@ void ApartmentMenu::Show(AppService& service)
         case 0:
             return;
         default:
-            std::cout << "Invalid.\n";
+            std::cout << "Недійсний.\n ";
         }
     }
 }
 
 void ApartmentMenu::AddApartment(AppService& service)
 {
-    std::cout << "\n--- Add New Apartment ---\n";
+    std::cout << "\n--- Додати нову квартиру ---\n ";
 
-    std::string city = Input::GetLine("City: ");
-    int capacity = Input::GetInt("Capacity: ");
+    std::string city = Input::GetLine("Місто: ");
+    int capacity = Input::GetInt("Ємність: ");
 
-    auto livingCond = Input::GetListInput("Living Conditions");
-    auto bookingCond = Input::GetListInput("Booking Conditions");
-    auto amenities = Input::GetListInput("Amenities (WiFi, Pool, etc.)");
+    auto livingCond = Input::GetListInput("Умови проживання ");
+    auto bookingCond = Input::GetListInput("Умови бронювання ");
+    auto amenities = Input::GetListInput("Зручності (Wi-Fi, басейн тощо) ");
 
     std::array<float, 4> prices;
-    std::cout << "Enter daily price for each season:\n";
-    prices[0] = Input::GetFloat("Spring: ");
-    prices[1] = Input::GetFloat("Summer: ");
-    prices[2] = Input::GetFloat("Autumn: ");
-    prices[3] = Input::GetFloat("Winter: ");
+    std::cout << "Введіть щоденну ціну для кожного сезону:\n ";
+    prices[0] = Input::GetFloat("Весна: ");
+    prices[1] = Input::GetFloat("Літо:");
+    prices[2] = Input::GetFloat("Осінь: ");
+    prices[3] = Input::GetFloat("Зима: ");
 
     try
     {
         service.AddApartment(city, capacity, livingCond, bookingCond, amenities,
                              prices);
-        std::cout << "Apartment added successfully!\n";
+        std::cout << "Квартира успішно додана!\n ";
     }
     catch (const std::exception& ex)
     {
-        std::cout << "Error adding apartment: " << ex.what() << "\n";
+        std::cout << "Помилка додавання квартири: " << ex.what() << "\n ";
     }
 }
 
 void ApartmentMenu::EditApartment(AppService& service)
 {
-    int id = Input::GetInt("Enter Apartment ID to edit: ");
+    int id = Input::GetInt("Введіть ID квартири для редагування: ");
 
     auto apt = service.GetApartmentById(id);
     if (!apt)
     {
-        std::cout << "Apartment not found.\n";
+        std::cout << "Квартира не знайдена.\n ";
         return;
     }
 
-    std::cout << "Editing Apartment " << id << ". Choose field:\n"
-              << "1. City\n"
-              << "2. Capacity\n"
-              << "3. Price (Winter)\n"
-              << "0. Cancel\n";
+    std::cout << "Редагування квартири " << id << ". Виберіть поле:\n "
+              << "1. Місто\n "
+              << "2. Ємність\n "
+              << "3. Ціна (Зима)\n "
+              << "0. Скасувати\n ";
 
     int choice = Input::GetInt("> ");
 
@@ -104,32 +104,32 @@ void ApartmentMenu::EditApartment(AppService& service)
         {
         case 1:
         {
-            std::string newCity = Input::GetLine("New City: ");
+            std::string newCity = Input::GetLine("Нове місто: ");
             service.UpdateApartmentCity(id, newCity);
             break;
         }
         case 2:
         {
-            int newCap = Input::GetInt("New Capacity: ");
+            int newCap = Input::GetInt("Нова ємність: ");
             service.UpdateApartmentCapacity(id, newCap);
             break;
         }
         case 3:
         {
-            int season = Input::GetInt("Season:\n0. Spring\n1. Summer\n2. "
-                                       "Fall\n3. Winter\n");
-            float newPrice = Input::GetFloat("New Price: ");
+            int season = Input::GetInt("Сезон:\n0. Весна\n1. Літо\n2. "
+                                       "Падіння\n3. Зима\n ");
+            float newPrice = Input::GetFloat("Нова ціна: ");
             service.UpdateSeasonPrice(id, Season(season), newPrice);
             break;
         }
         case 0:
             return;
         }
-        std::cout << "Update successful.\n";
+        std::cout << "Оновлення успішне.\n ";
     }
     catch (const std::exception& ex)
     {
-        std::cout << "Update failed: " << ex.what() << "\n";
+        std::cout << "Помилка оновлення: " << ex.what() << "\n ";
     }
 }
 
@@ -139,67 +139,67 @@ void ApartmentMenu::ListAll(AppService& service)
 
     if (list.empty())
     {
-        std::cout << "No apartments found.\n";
+        std::cout << "Квартир не знайдено.\n ";
         return;
     }
 
     for (auto ap : list)
     {
         std::cout << ap->GetId() << " | " << ap->GetCity()
-                  << " | Capacity: " << ap->GetCapacity()
-                  << " | Price(winter): "
-                  << ap->GetDailyPrice((int)Season::Winter) << "\n";
+                  << "| Ємність: " << ap->GetCapacity()
+                  << "| Ціна (зима): "
+                  << ap->GetDailyPrice((int)Season::Winter) << "\n ";
     }
 }
 
 void ApartmentMenu::Filter(AppService& service)
 {
-    std::cout << "\nFilter:\n"
-              << "1. By city\n"
-              << "2. By min capacity\n"
-              << "3. By max price (season)\n"
-              << "0. Back\n";
+    std::cout << "\nФільтр:\n "
+              << "1. За містом\n "
+              << "2. За мінімальною потужністю\n "
+              << "3. За максимальною ціною (сезон)\n "
+              << "0. Назад\n ";
 
-    int ch = Input::GetInt("Choose: ");
+    int ch = Input::GetInt("Виберіть: ");
 
     switch (ch)
     {
     case 1:
     {
-        std::string city = Input::GetLine("City: ");
+        std::string city = Input::GetLine("Місто: ");
         auto res = service.SearchByCity(city);
         if (res.empty())
-            std::cout << "No results.\n";
+            std::cout << "Немає результатів.\n ";
         else
             for (auto ap : res)
-                std::cout << ap->GetId() << " | " << ap->GetCity() << "\n";
+                std::cout << ap->GetId() << " | " << ap->GetCity() << "\n ";
         break;
     }
 
     case 2:
     {
-        int cap = Input::GetInt("Min capacity: ");
+        int cap = Input::GetInt("Мінімальна потужність: ");
         auto res = service.SearchByCapacity(cap);
         if (res.empty())
-            std::cout << "No results.\n";
+            std::cout << "Немає результатів.\n ";
         else
             for (auto ap : res)
-                std::cout << ap->GetId() << " | cap: " << ap->GetCapacity()
-                          << "\n";
+                std::cout << ap->GetId() << "| шапка: " << ap->GetCapacity()
+                          << "\n ";
         break;
     }
 
     case 3:
     {
-        int season = Input::GetInt("Season(0-3): ");
-        float maxPrice = Input::GetFloat("Max price per season: ");
+        int season = Input::GetInt("Сезон (0-3): ");
+        float maxPrice = Input::GetFloat("Максимальна ціна за сезон: ");
         auto res = service.SearchByMaxPrice(maxPrice, season);
         if (res.empty())
-            std::cout << "No results.\n";
+            std::cout << "Немає результатів.\n ";
         else
             for (auto ap : res)
                 std::cout << ap->GetId()
-                          << " | price: " << ap->GetDailyPrice(season) << "\n";
+                          << "| ціна: " << ap->GetDailyPrice(season) << "\n ";
         break;
     }
 
@@ -210,14 +210,14 @@ void ApartmentMenu::Filter(AppService& service)
 
 void ApartmentMenu::Sort(AppService& service)
 {
-    std::cout << "\nSort:\n"
-              << "1. By price ascending\n"
-              << "2. By price descending\n"
-              << "3. By capacity ascending\n"
-              << "4. By capacity descending\n"
-              << "0. Back\n";
+    std::cout << "\nСортувати:\n "
+              << "1. За зростанням ціни\n "
+              << "2. За спадною ціною\n "
+              << "3. За зростанням ємності\n "
+              << "4. За ємністю спадання\n "
+              << "0. Назад\n ";
 
-    int ch = Input::GetInt("Choose: ");
+    int ch = Input::GetInt("Виберіть: ");
 
     switch (ch)
     {
@@ -225,28 +225,28 @@ void ApartmentMenu::Sort(AppService& service)
     {
         auto res = service.SortByPrice(true);
         for (auto ap : res)
-            std::cout << ap->GetId() << " | " << ap->GetDailyPrice(0) << "\n";
+            std::cout << ap->GetId() << " | " << ap->GetDailyPrice(0) << "\n ";
         break;
     }
     case 2:
     {
         auto res = service.SortByPrice(false);
         for (auto ap : res)
-            std::cout << ap->GetId() << " | " << ap->GetDailyPrice(0) << "\n";
+            std::cout << ap->GetId() << " | " << ap->GetDailyPrice(0) << "\n ";
         break;
     }
     case 3:
     {
         auto res = service.SortByCapacity(true);
         for (auto ap : res)
-            std::cout << ap->GetId() << " | cap: " << ap->GetCapacity() << "\n";
+            std::cout << ap->GetId() << "| шапка: " << ap->GetCapacity() << "\n ";
         break;
     }
     case 4:
     {
         auto res = service.SortByCapacity(false);
         for (auto ap : res)
-            std::cout << ap->GetId() << " | cap: " << ap->GetCapacity() << "\n";
+            std::cout << ap->GetId() << "| шапка: " << ap->GetCapacity() << "\n ";
         break;
     }
     default:
@@ -256,38 +256,38 @@ void ApartmentMenu::Sort(AppService& service)
 
 void UI::ApartmentMenu::ViewDetails(AppService& service)
 {
-    int id = Input::GetInt("Enter apartment ID: ");
+    int id = Input::GetInt("Введіть ID квартири: ");
 
     auto ap = service.GetApartmentById(id);
     if (!ap)
     {
-        std::cout << "Not found.\n";
+        std::cout << "Не знайдено.\n ";
         return;
     }
 
-    std::cout << "\n=== APARTMENT " << id << " ===\n";
-    std::cout << "City: " << ap->GetCity() << "\n";
-    std::cout << "Capacity: " << ap->GetCapacity() << "\n";
-    std::cout << "Owner ID: " << ap->GetSellerId() << "\n";
+    std::cout << "\n=== КВАРТИРА " << id << "===\n ";
+    std::cout << "Місто: " << ap->GetCity() << "\n ";
+    std::cout << "Ємність: " << ap->GetCapacity() << "\n ";
+    std::cout << "ID власника: " << ap->GetSellerId() << "\n ";
 
-    std::cout << "\n--- Living Conditions ---\n";
+    std::cout << "\n--- Умови життя ---\n ";
     for (auto& s : ap->GetLivingConditions())
-        std::cout << "- " << s << "\n";
+        std::cout << "- " << s << "\n ";
 
-    std::cout << "\n--- Booking Conditions ---\n";
+    std::cout << "\n--- Умови бронювання ---\n ";
     for (auto& s : ap->GetBookingConditions())
-        std::cout << "- " << s << "\n";
+        std::cout << "- " << s << "\n ";
 
-    std::cout << "\n--- Amenities ---\n";
+    std::cout << "\n--- Зручності ---\n ";
     for (auto& s : ap->GetAmenities())
-        std::cout << "- " << s << "\n";
+        std::cout << "- " << s << "\n ";
 
-    std::cout << "\n--- Pricing (Daily / Weekly) ---\n";
+    std::cout << "\n--- Ціни (щодня / щотижня) ---\n ";
     for (int s = 0; s < 4; ++s)
     {
         float daily = ap->GetDailyPrice(s);
         float weekly = daily * 7;
         std::cout << HelperFuncs::SeasonName((Season)s) << ": " << daily
-                  << " / " << weekly << " UAH\n";
+                  << " / " << weekly << "грн\n ";
     }
 }

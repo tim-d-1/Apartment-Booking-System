@@ -65,7 +65,7 @@ class Db final
         else if constexpr (std::is_same_v<T, Booking>)
             return bookings;
         else
-            throw std::logic_error("Unsupported model type");
+            throw std::logic_error("Непідтримуваний тип моделі ");
     }
 
     template <ModelT T> int& GetLastIdRef()
@@ -79,7 +79,7 @@ class Db final
         else if constexpr (std::is_same_v<T, Booking>)
             return lastBookingId;
         else
-            throw std::logic_error("Unsupported model type");
+            throw std::logic_error("Непідтримуваний тип моделі ");
     }
 
     template <ModelT T> const char* GetFilenameForType()
@@ -93,7 +93,7 @@ class Db final
         else if constexpr (std::is_same_v<T, Booking>)
             return ConfigPaths::Bookings;
         else
-            throw std::logic_error("Unsupported model type");
+            throw std::logic_error("Непідтримуваний тип моделі ");
     }
 
     template <ModelT T> void LoadContainer()
@@ -108,7 +108,7 @@ class Db final
         if (!storage->Exists(filename))
         {
 #ifdef LOGGING
-            std::cerr << "[Info] File not found: " << filename << '\n';
+            std::cerr << "[Інформація] Файл не знайдено: " << filename << '\n';
 #endif
             return;
         }
@@ -129,8 +129,8 @@ class Db final
             catch (...)
             {
 #ifdef LOGGING
-                std::cerr << "[Error] Failed to load: " << ex.what()
-                          << "\nLine: " << line << '\n';
+                std::cerr << "[Помилка] Не вдалося завантажити: " << ex.what()
+                          << "\nРядок: " << line << '\n';
 #endif
             }
         }

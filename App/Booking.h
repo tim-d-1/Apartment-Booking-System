@@ -34,7 +34,7 @@ class Booking : public Model
           to(to), totalPayment(totalPayment), paid(paid), refunded(refunded)
     {
         if (!(from < to))
-            throw std::invalid_argument("Booking: from must be < to");
+            throw std::invalid_argument("Бронювання: від повинно бути < до ");
     }
 
     int GetApartmentId() const
@@ -69,13 +69,13 @@ class Booking : public Model
     void MarkPaid()
     {
         if (paid)
-            throw std::runtime_error("Already paid");
+            throw std::runtime_error("Вже заплатив ");
         paid = true;
     }
     void MarkRefunded()
     {
         if (!paid)
-            throw std::runtime_error("Cannot refund unpaid");
+            throw std::runtime_error("Неможливо повернути несплачену суму ");
         refunded = true;
     }
 
@@ -91,7 +91,7 @@ class Booking : public Model
     virtual void Deserialize(std::vector<std::string> params) override
     {
         if (params.size() != 8)
-            throw std::runtime_error("Booking::Deserialize expected 8 fields");
+            throw std::runtime_error("Booking::Deserialize очікувані 8 полів ");
 
         id = std::stoi(params[0]);
         apartmentId = std::stoi(params[1]);

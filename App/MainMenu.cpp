@@ -22,10 +22,10 @@ void UI::MainMenu::Run(AppService& service)
 
 void UI::MainMenu::ShowGuestMenu(AppService& service)
 {
-    std::cout << "\n--- Guest Menu ---\n"
-              << "1. Login\n"
-              << "2. Register\n"
-              << "0. Exit\n";
+    std::cout << "\n--- Гість меню ---\n "
+              << "1. Вхід\n "
+              << "2. Зареєструватися\n "
+              << "0. Вийти\n ";
 
     switch (Input::GetInt("> "))
     {
@@ -42,11 +42,11 @@ void UI::MainMenu::ShowGuestMenu(AppService& service)
 
 void UI::MainMenu::ShowUserMenu(AppService& service)
 {
-    std::cout << "\n--- User Menu ---\n"
-              << "1. Apartments\n"
-              << "2. Booking menu\n"
-              << "3. Logout\n"
-              << "0. Exit\n";
+    std::cout << "\n--- Меню користувача ---\n "
+              << "1. Квартири\n "
+              << "2. Меню бронювання\n "
+              << "3. Вийти з акаунта\n "
+              << "0. Вийти\n ";
 
     switch (Input::GetInt("> "))
     {
@@ -55,12 +55,12 @@ void UI::MainMenu::ShowUserMenu(AppService& service)
         break;
 
     case 2:
-        std::cout << "\n--- Booking Actions ---\n"
-                  << "1. Make booking\n"
-                  << "2. List my bookings\n"
-                  << "3. Pay\n"
-                  << "4. Cancel\n"
-                  << "5. Export receipt\n";
+        std::cout << "\n--- Дії бронювання ---\n "
+                  << "1. Здійснити бронювання\n "
+                  << "2. Перерахувати мої бронювання\n "
+                  << "3. Оплатити\n "
+                  << "4. Скасувати\n "
+                  << "5. Експортна квитанція\n ";
 
         switch (Input::GetInt("> "))
         {
@@ -92,12 +92,12 @@ void UI::MainMenu::ShowUserMenu(AppService& service)
 
 void UI::MainMenu::ShowAdminMenu(AppService& service)
 {
-    std::cout << "\n=== MAIN MENU (Admin) ===\n"
-              << "1. Admin panel\n"
-              << "2. Logout\n"
-              << "0. Exit\n";
+    std::cout << "\n=== ГОЛОВНЕ МЕНЮ (Адміністратор) ===\n "
+              << "1. Панель адміністратора\n "
+              << "2. Вийти з акаунта\n "
+              << "0. Вийти\n ";
 
-    int choice = Input::GetInt("Choose: ");
+    int choice = Input::GetInt("Виберіть: ");
 
     switch (choice)
     {
@@ -113,6 +113,6 @@ void UI::MainMenu::ShowAdminMenu(AppService& service)
         exit(0);
 
     default:
-        std::cout << "Invalid.\n";
+        std::cout << "Недійсний.\n ";
     }
 }

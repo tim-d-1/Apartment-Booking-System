@@ -10,7 +10,7 @@ class User : public Model
     std::string password;
 
   public:
-    User() : Model(), username("guest"), password("guest")
+    User() : Model(), username("гість "), password("гість ")
     {
     }
 
@@ -58,20 +58,20 @@ class User : public Model
 
     virtual ~User() override
     {
-        std::cout << "User object " << id << " destroyed.\n";
+        std::cout << "Об'єкт користувача " << id << "знищено.\n ";
     }
 
     void SetUsername(const std::string& u)
     {
         if (u.empty())
-            throw std::invalid_argument("Username cannot be empty.");
+            throw std::invalid_argument("Ім'я користувача не може бути пустим. ");
         username = u;
     }
 
     void SetPassword(const std::string& p)
     {
         if (!HelperFuncs::isValidPassword(p))
-            throw std::invalid_argument("Password is too weak.");
+            throw std::invalid_argument("Пароль занадто слабкий. ");
         password = p;
     }
 
@@ -89,7 +89,7 @@ class User : public Model
                                 const std::string& newPass)
     {
         if (oldPass != password)
-            throw std::runtime_error("Old password incorrect.");
+            throw std::runtime_error("Старий пароль неправильний. ");
         SetPassword(newPass);
     }
 
@@ -103,7 +103,7 @@ class User : public Model
     virtual void Deserialize(std::vector<std::string> params) override
     {
         if (params.size() != 3)
-            throw std::runtime_error("User::Deserialize expected 3 fields.");
+            throw std::runtime_error("User::Deserialize очікувані 3 поля. ");
 
         id = std::stoi(params[0]);
         SetUsername(params[1]);

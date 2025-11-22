@@ -42,15 +42,15 @@ struct HelperFuncs
         switch (s)
         {
         case Season::Spring:
-            return "Spring";
+            return "Весна ";
         case Season::Summer:
-            return "Summer";
+            return "Літо ";
         case Season::Autumn:
-            return "Autumn";
+            return "Осінь ";
         case Season::Winter:
-            return "Winter";
+            return "Зима ";
         }
-        return "Unknown";
+        return "Невідомий ";
     }
 
     /**
@@ -94,8 +94,8 @@ struct HelperFuncs
                 }
                 else
                 {
-                    throw std::invalid_argument("Converter required for "
-                                                "non-string types");
+                    throw std::invalid_argument("Необхідний конвертер для "
+                                                "нерядкові типи ");
                 }
             }
         }
@@ -131,8 +131,8 @@ struct HelperFuncs
                 }
                 else
                 {
-                    throw std::invalid_argument("Converter required for "
-                                                "non-string types");
+                    throw std::invalid_argument("Необхідний конвертер для "
+                                                "нерядкові типи ");
                 }
             }
         }

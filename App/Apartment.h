@@ -91,27 +91,27 @@ class Apartment : public Model
 
     virtual ~Apartment() override
     {
-        std::cout << "Apartment object " << id << " destroyed.\n";
+        std::cout << "Квартирний об'єкт " << id << "знищено.\n ";
     }
 
     void SetCity(const std::string& c)
     {
         if (c.empty())
-            throw std::invalid_argument("City cannot be empty.");
+            throw std::invalid_argument("Місто не може бути порожнім. ");
         city = c;
     }
 
     void SetCapacity(int c)
     {
         if (c <= 0)
-            throw std::invalid_argument("Capacity must be > 0.");
+            throw std::invalid_argument("Ємність має бути > 0. ");
         capacity = c;
     }
 
     void EditDailyPrice(Season season, float price)
     {
         if (price < MINIMAL_PRICE_PER_DAY / 7)
-            throw std::runtime_error("Price too low");
+            throw std::runtime_error("Ціна занадто низька ");
 
         seasonalDailyPrice[(int)season] = price;
     }
@@ -125,12 +125,12 @@ class Apartment : public Model
                            const std::string& value, int index)
     {
         if (index < -1 || index >= (int)vec.size())
-            throw std::out_of_range("Invalid index for container edit.");
+            throw std::out_of_range("Недійсний індекс для редагування контейнера. ");
 
         if (index == -1)
         {
             if (value.empty())
-                throw std::invalid_argument("Cannot add empty string.");
+                throw std::invalid_argument("Неможливо додати порожній рядок. ");
             vec.push_back(value);
             return;
         }
@@ -156,14 +156,14 @@ class Apartment : public Model
     float GetDailyPrice(int season) const
     {
         if (season < 0 || season >= seasonalDailyPrice.size())
-            throw std::out_of_range("Invalid season index");
+            throw std::out_of_range("Недійсний індекс сезону ");
         return seasonalDailyPrice[season];
     }
 
     void EditCapacity(int newCapacity)
     {
         if (newCapacity <= 0)
-            throw std::invalid_argument("Capacity must be positive");
+            throw std::invalid_argument("Ємність повинна бути позитивною ");
         capacity = newCapacity;
     }
 
@@ -239,8 +239,8 @@ class Apartment : public Model
     virtual void Deserialize(std::vector<std::string> params) override
     {
         if (params.size() != 8)
-            throw std::runtime_error("Apartment::Deserialize expected 8 "
-                                     "fields.");
+            throw std::runtime_error("Квартира::Очікується десеріалізація 8 "
+                                     "поля. ");
 
         id = std::stoi(params[0]);
         SetCity(params[1]);

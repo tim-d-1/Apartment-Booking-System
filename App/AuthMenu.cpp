@@ -7,35 +7,35 @@ using namespace UI;
 
 void AuthMenu::Login(AppService& service)
 {
-    std::string u = Input::GetLine("Username: ");
-    std::string p = Input::GetLine("Password: ");
+    std::string u = Input::GetLine("Ім'я користувача: ");
+    std::string p = Input::GetLine("Пароль: ");
 
     try
     {
         if (service.Login(u, p))
-            std::cout << "Successfully logged in.\n";
+            std::cout << "Успішно ввійшли.\n ";
         else
-            std::cout << "Invalid credentials.\n";
+            std::cout << "Недійсні облікові дані.\n ";
     }
     catch (const std::exception& ex)
     {
-        std::cout << "Error: " << ex.what() << "\n";
+        std::cout << "Помилка: " << ex.what() << "\n ";
     }
 }
 
 void AuthMenu::Register(AppService& service)
 {
-    std::string u = Input::GetLine("New username: ");
-    std::string p = Input::GetLine("New password: ");
+    std::string u = Input::GetLine("Нове ім'я користувача: ");
+    std::string p = Input::GetLine("Новий пароль: ");
 
     try
     {
         service.RegisterUser(u, p);
-        std::cout << "User created.\n";
+        std::cout << "Користувача створено.\n ";
     }
     catch (const std::exception& ex)
     {
-        std::cout << "Error: " << ex.what() << "\n";
+        std::cout << "Помилка: " << ex.what() << "\n ";
     }
 }
 
@@ -43,10 +43,10 @@ void AuthMenu::Logout(AppService& service)
 {
     if (!service.IsAuthenticated())
     {
-        std::cout << "Not logged in.\n";
+        std::cout << "Не ввійшли в систему.\n ";
         return;
     }
 
     service.Logout();
-    std::cout << "Logged out.\n";
+    std::cout << "Вийшов із системи.\n ";
 }
